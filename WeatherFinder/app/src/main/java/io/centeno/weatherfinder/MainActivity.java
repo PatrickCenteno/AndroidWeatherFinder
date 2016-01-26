@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         llm = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(llm);
 
-        weatherAdapter = new WeatherAdapter(locations);
+        weatherAdapter = new WeatherAdapter(locations, this);
         recyclerView.setAdapter(weatherAdapter);
     }
 
