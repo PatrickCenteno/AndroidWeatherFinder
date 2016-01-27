@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/toolbar"
-    android:paddingTop="16dp"
-    android:layout_width="match_parent"
+<LinearLayout
     android:layout_height="wrap_content"
-    android:background="@color/main"
-    app:theme="@style/ToolbarTheme">
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <android.support.v7.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/main"
+        app:theme="@style/ToolbarTheme">
 
-</android.support.v7.widget.Toolbar>
+        <!-- Had to hack this out to get the title aligned properly-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingTop="16dp"
+            android:id="@+id/toolbar_title"
+            android:text="Weather Finder"
+            android:textColor="@color/appwhite"
+            android:textSize="20dp"/>
+    </android.support.v7.widget.Toolbar>
+
+</LinearLayout>

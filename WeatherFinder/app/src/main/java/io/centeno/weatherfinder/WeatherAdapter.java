@@ -30,6 +30,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
 
     public void addToLocations(Location l){
         locations.add(l);
+        notifyDataSetChanged();
     }
 
     @Override

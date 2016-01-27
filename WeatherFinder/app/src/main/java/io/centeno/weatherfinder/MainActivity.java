@@ -25,7 +25,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Weather Finder");
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
 
         initList();
 
@@ -57,11 +60,12 @@ public class MainActivity extends AppCompatActivity {
     // Simply for testing
     private void initList(){
         locations = new ArrayList<>();
-        locations.add(new Location("Brooklyn", "New York", "US", "11.1.1.1."));
-        locations.add(new Location("Los Angles", "California", "US", "11.1.1.1.434"));
-        locations.add(new Location("London", "", "England", "4.3.4122..2"));
-        locations.add(new Location("Blakdf", "sdfsdf", "sdfsdfs", "747474747474"));
-        locations.add(new Location("Brooklyn", "New York", "US", "11.1.1.1."));
-        locations.add(new Location("Brooklyn", "New York", "US", "11.1.1.1."));
+        // Some dummy locations just for testin
+//        locations.add(new Location("Brooklyn", "New York", "US", "11.1.1.1."));
+//        locations.add(new Location("Los Angles", "California", "US", "11.1.1.1.434"));
+//        locations.add(new Location("London", "", "England", "4.3.4122..2"));
+//        locations.add(new Location("Blakdf", "sdfsdf", "sdfsdfs", "747474747474"));
+//        locations.add(new Location("Brooklyn", "New York", "US", "11.1.1.1."));
+//        locations.add(new Location("Brooklyn", "New York", "US", "11.1.1.1."));
     }
 }
