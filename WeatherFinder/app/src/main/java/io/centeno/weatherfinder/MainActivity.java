@@ -8,27 +8,41 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+
+
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+    implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private Toolbar toolbar;
     private RecyclerView recyclerView;
     private List<Location> locations;
     private WeatherAdapter weatherAdapter;
     private LinearLayoutManager llm;
+    private GoogleApiClient apiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Weather Finder");
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        if(apiClient == null){
+            apiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+
+        }
 
         initList();
 
@@ -67,5 +81,38 @@ public class MainActivity extends AppCompatActivity {
 //        locations.add(new Location("Blakdf", "sdfsdf", "sdfsdfs", "747474747474"));
 //        locations.add(new Location("Brooklyn", "New York", "US", "11.1.1.1."));
 //        locations.add(new Location("Brooklyn", "New York", "US", "11.1.1.1."));
+    }
+
+    @Override
+    protected void onStop() {
+        apiClient.disconnect();
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        apiClient.disconnect();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume(){
+        apiClient.connect();
+        super.onResume();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }
