@@ -7,7 +7,7 @@
         <!--We will be using the toolbar so no need to show ActionBar-->
         <item name="windowActionBar">false</item>
         <item name="colorPrimary">@color/main</item>
-        <item name="colorPrimaryDark">#1B5E20</item>
+        <item name="colorPrimaryDark">@color/main_dark</item>
     </style>
 
     <style name="ToolbarTheme" parent="Widget.AppCompat.Toolbar">
@@ -19,5 +19,6 @@
     <color name="main">#4CAF50</color>
     <color name="appwhite">#E8F5E9</color>
     <color name="black">#000000</color>
+    <color name="main_dark">#1B5E20</color>
 
 </resources>

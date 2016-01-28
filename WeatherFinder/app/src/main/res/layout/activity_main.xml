@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Click the Plus Icon to add some locations"
-        android:id="@+id/textView"
+        android:id="@+id/listIsEmpty"
         android:layout_gravity="center_horizontal"
         android:textSize="24dp"
         android:padding="35dp"

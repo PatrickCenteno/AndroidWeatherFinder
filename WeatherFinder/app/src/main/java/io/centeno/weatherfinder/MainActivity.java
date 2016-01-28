@@ -1,5 +1,10 @@
 package io.centeno.weatherfinder;
 
+import android.app.DialogFragment;
+import android.content.Context;
+import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,6 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -18,40 +26,57 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
-    implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
+        ,LocationChooserDialog.LocationDialogListener{
+
+    private final String TAG = "MainActivity";
 
     private Toolbar toolbar;
+    private TextView listEmpty;
     private RecyclerView recyclerView;
-    private List<Location> locations;
+    private List<SelectedLocations> selectedLocations;
     private WeatherAdapter weatherAdapter;
     private LinearLayoutManager llm;
     private GoogleApiClient apiClient;
+    private Location lastLocation;
+    private String latitude;
+    private String longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        //getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-        if(apiClient == null){
+        setContentView(R.layout.splash);
+        if (apiClient == null) {
             apiClient = new GoogleApiClient.Builder(this)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
-
         }
+        if(isOnline()) {
+            setContentView(R.layout.activity_main);
+            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        initList();
+            initList();
 
-        recyclerView = (RecyclerView) findViewById(R.id.weather_list);
-        llm = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(llm);
+            recyclerView = (RecyclerView) findViewById(R.id.weather_list);
+            llm = new LinearLayoutManager(this);
+            recyclerView.setLayoutManager(llm);
 
-        weatherAdapter = new WeatherAdapter(locations, this);
-        recyclerView.setAdapter(weatherAdapter);
+            weatherAdapter = new WeatherAdapter(selectedLocations, this);
+            recyclerView.setAdapter(weatherAdapter);
+
+            listEmpty = (TextView) findViewById(R.id.listIsEmpty);
+            if (selectedLocations.size() > 0){
+                listEmpty.setVisibility(View.GONE);
+            }
+
+        }else {
+            Toast.makeText(this, "Check your Internet Connection before starting.",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -68,42 +93,80 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         // Currently not being used
 
+        int id = item.getItemId();
+
+        if (id == R.id.add_location){
+            showDiaglog();
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
     // Simply for testing
     private void initList(){
-        locations = new ArrayList<>();
-        // Some dummy locations just for testin
-//        locations.add(new Location("Brooklyn", "New York", "US", "11.1.1.1."));
-//        locations.add(new Location("Los Angles", "California", "US", "11.1.1.1.434"));
-//        locations.add(new Location("London", "", "England", "4.3.4122..2"));
-//        locations.add(new Location("Blakdf", "sdfsdf", "sdfsdfs", "747474747474"));
-//        locations.add(new Location("Brooklyn", "New York", "US", "11.1.1.1."));
-//        locations.add(new Location("Brooklyn", "New York", "US", "11.1.1.1."));
+        selectedLocations = new ArrayList<>();
+        // Pull from shared preferences and load the list
+////         Some dummy locations just for testin
+//        selectedLocations.add(new SelectedLocations("Brooklyn", "New York", "US", "11.1.1.1."));
+//        selectedLocations.add(new SelectedLocations("Los Angles", "California", "US", "11.1.1.1.434"));
+//        selectedLocations.add(new SelectedLocations("London", "", "England", "4.3.4122..2"));
+//        selectedLocations.add(new SelectedLocations("Blakdf", "sdfsdf", "sdfsdfs", "747474747474"));
+//        selectedLocations.add(new SelectedLocations("Brooklyn", "New York", "US", "11.1.1.1."));
+//        selectedLocations.add(new SelectedLocations("Brooklyn", "New York", "US", "11.1.1.1."));
+    }
+
+    public boolean isOnline(){
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    public void showDiaglog(){
+        DialogFragment dialog = new LocationChooserDialog();
+        dialog.show(getFragmentManager(), TAG);
+    }
+
+    @Override
+    public void onfindLocationClick() {
+
+    }
+
+    @Override
+    public void onSetLocationClick() {
+
     }
 
     @Override
     protected void onStop() {
-        apiClient.disconnect();
+        if(isOnline())  apiClient.disconnect();
         super.onStop();
     }
 
     @Override
     protected void onPause() {
-        apiClient.disconnect();
+        if(isOnline())  apiClient.disconnect();
         super.onPause();
     }
 
     @Override
     protected void onResume(){
-        apiClient.connect();
+        if(isOnline())  apiClient.connect();
         super.onResume();
     }
 
     @Override
     public void onConnected(Bundle bundle) {
-
+        try {
+            lastLocation = LocationServices.FusedLocationApi
+                    .getLastLocation(apiClient);
+            if (lastLocation != null){
+                latitude = String.valueOf(lastLocation.getLatitude());
+                longitude = String.valueOf(lastLocation.getLongitude());
+            }
+        }catch (SecurityException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
