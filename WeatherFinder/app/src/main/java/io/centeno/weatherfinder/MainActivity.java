@@ -2,14 +2,18 @@ package io.centeno.weatherfinder;
 
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,6 +43,7 @@ public class MainActivity extends AppCompatActivity
     private LinearLayoutManager llm;
     private GoogleApiClient apiClient;
     private Location lastLocation;
+    private AddressResultReceiver addressResultReceiver;
     private String latitude;
     private String longitude;
 
@@ -130,6 +135,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onfindLocationClick() {
         Toast.makeText(this, "Latitude: " + latitude + " Longitude: " + longitude, Toast.LENGTH_LONG).show();
+        startIntentService();
     }
 
     @Override
@@ -177,5 +183,38 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
+    }
+
+    private void startIntentService(){
+        Intent intent = new Intent(this, FetchAddressIntentService.class);
+        intent.putExtra(Constants.RECEIVER, addressResultReceiver);
+        intent.putExtra(Constants.LOCATION_DATA_EXTRA, lastLocation);
+        startService(intent);
+    }
+
+    /**
+     * Receiver for data sent from FetchAddressIntentService.
+     */
+    class AddressResultReceiver extends ResultReceiver {
+        public AddressResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        /**
+         *  Receives data sent from FetchAddressIntentService and updates the UI in MainActivity.
+         */
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            // Display the address string or an error message sent from the intent service.
+            Log.d(TAG, resultData.getString(Constants.RESULT_DATA_KEY));
+
+
+            // Show a toast message if an address was found.
+            if (resultCode == Constants.SUCCESS_RESULT) {
+                Toast.makeText(getApplicationContext(), "Address Found", Toast.LENGTH_LONG).show();
+            }
+
+        }
     }
 }
