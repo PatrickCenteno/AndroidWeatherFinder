@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onfindLocationClick() {
-
+        Toast.makeText(this, "Latitude: " + latitude + " Longitude: " + longitude, Toast.LENGTH_LONG).show();
     }
 
     @Override
