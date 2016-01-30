@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity
 
     private Toolbar toolbar;
     private TextView listEmpty;
+    private TextView myPlaces;
     private RecyclerView recyclerView;
     private List<SelectedLocations> selectedLocations;
     private WeatherAdapter weatherAdapter;
@@ -74,9 +75,12 @@ public class MainActivity extends AppCompatActivity
             recyclerView.setAdapter(weatherAdapter);
 
             listEmpty = (TextView) findViewById(R.id.listIsEmpty);
+            myPlaces = (TextView) findViewById(R.id.my_places);
             if (selectedLocations.size() > 0){
                 listEmpty.setVisibility(View.GONE);
+                myPlaces.setVisibility(View.VISIBLE);
             }
+            addressResultReceiver = new AddressResultReceiver(new Handler());
 
         }else {
             Toast.makeText(this, "Check your Internet Connection before starting.",
@@ -134,8 +138,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onfindLocationClick() {
-        Toast.makeText(this, "Latitude: " + latitude + " Longitude: " + longitude, Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Latitude: " + latitude + " Longitude: " + longitude, Toast.LENGTH_LONG).show();
         startIntentService();
+
     }
 
     @Override
@@ -214,7 +219,17 @@ public class MainActivity extends AppCompatActivity
             if (resultCode == Constants.SUCCESS_RESULT) {
                 Toast.makeText(getApplicationContext(), "Address Found", Toast.LENGTH_LONG).show();
             }
+            String city = resultData.getString("city");
+            String state = resultData.getString("state");
+            String country = resultData.getString("country");
+            selectedLocations.add(new SelectedLocations(city, state, country));
+            weatherAdapter.notifyDataSetChanged();
+            if (selectedLocations.size() > 0){
+                listEmpty.setVisibility(View.GONE);
+                myPlaces.setVisibility(View.VISIBLE);
+            }
 
         }
     }
+
 }

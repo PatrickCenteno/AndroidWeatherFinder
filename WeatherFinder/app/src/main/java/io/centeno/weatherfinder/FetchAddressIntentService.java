@@ -83,7 +83,11 @@ public class FetchAddressIntentService extends IntentService {
             deliverResultToReceiver(Constants.FAILURE_RESULT, errorMessage);
         }
         else{
-            Log.d(TAG, "Address: " + addresses.get(0).toString());
+            String city = addresses.get(0).getLocality();
+            String state = addresses.get(0).getAdminArea();
+            String country = addresses.get(0).getCountryName();
+            deliverResultToReceiver(Constants.SUCCESS_RESULT, city, state, country, errorMessage);
+
         }
     }
 
@@ -96,5 +100,16 @@ public class FetchAddressIntentService extends IntentService {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.RESULT_DATA_KEY, message);
         mReceiver.send(resultCode, bundle);
+    }
+
+    // Overloaded Results sender
+    private void deliverResultToReceiver(int resulCode, String city, String state,
+            String country, String errorMessage){
+        Bundle bundle = new Bundle();
+        bundle.putString("city", city);
+        bundle.putString("state", state);
+        bundle.putString("country", country);
+        bundle.putString(Constants.RESULT_DATA_KEY, errorMessage);
+        mReceiver.send(resulCode, bundle);
     }
 }
