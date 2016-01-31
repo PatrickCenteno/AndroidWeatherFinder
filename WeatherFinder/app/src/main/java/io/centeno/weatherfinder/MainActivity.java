@@ -31,7 +31,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
     implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
-        ,LocationChooserDialog.LocationDialogListener, WeatherAdapter.WeatherViewHolder.DeleteItem{
+        ,LocationChooserDialog.LocationDialogListener{
 
     private final String TAG = "MainActivity";
 
@@ -87,6 +87,17 @@ public class MainActivity extends AppCompatActivity
                 myPlaces.setVisibility(View.VISIBLE);
             }
             addressResultReceiver = new AddressResultReceiver(new Handler());
+
+
+
+            // Notify main activity when delete is fired off in RecyclerView
+//            deleteItem = new WeatherAdapter.WeatherViewHolder.DeleteItem() {
+//                @Override
+//                public void removeFromView() {
+//                    Log.d(TAG, "Delete Item is initialized");
+//                    weatherAdapter.notifyDataSetChanged();
+//                }
+//            };
 
         }else {
             Toast.makeText(this, "Check your Internet Connection before starting.",
@@ -158,10 +169,10 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
     }
 
-    @Override
-    public void removeFromView() {
-        weatherAdapter.notifyDataSetChanged();
-    }
+//    @Override
+//    public void removeFromView() {
+//        weatherAdapter.notifyDataSetChanged();
+//    }
 
     @Override
     public void onConnected(Bundle bundle) {

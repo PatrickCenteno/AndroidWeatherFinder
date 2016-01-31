@@ -56,6 +56,7 @@ public class LocationChooserDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 listener.onfindLocationClick();
+                dismiss();
             }
         });
 
@@ -63,6 +64,7 @@ public class LocationChooserDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 listener.onSetLocationClick();
+                dismiss();
             }
         });
 

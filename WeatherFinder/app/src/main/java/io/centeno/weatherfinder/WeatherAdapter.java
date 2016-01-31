@@ -32,13 +32,14 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         notifyDataSetChanged();
     }
 
+
     @Override
     public WeatherViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View viewItem = LayoutInflater.from(
                 viewGroup.getContext()).inflate(R.layout.weather_card,
                 viewGroup, false);
 
-        return new WeatherViewHolder(viewItem, selectedLocations, context);
+        return new WeatherViewHolder(viewItem, selectedLocations, context, this);
     }
 
     @Override
@@ -72,19 +73,26 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         protected TextView delete;
         protected CardView cardView;
         protected List<SelectedLocations> selectedLocations;
+        protected WeatherAdapter weatherAdapter;
         protected Context context;
 
-        public interface DeleteItem{
-            public void removeFromView();
-        }
+//        public interface DeleteItem{
+//            void removeFromView();
+//        }
+//
+//        DeleteItem deleteItem;
 
-        DeleteItem deleteItem;
+//        public void setDeleteItem(DeleteItem deleteItem){
+//            this.deleteItem = deleteItem;
+//        }
 
-        public WeatherViewHolder(View itemView, final List<SelectedLocations> selectedLocations, Context context) {
+        public WeatherViewHolder(View itemView, final List<SelectedLocations> selectedLocations,
+                                 final Context context, final WeatherAdapter weatherAdapter) {
             super(itemView);
             Log.d(TAG, "Locations list size: " + selectedLocations.size());
             this.selectedLocations = selectedLocations;
             this.context = context;
+            this.weatherAdapter = weatherAdapter;
             cardView = (CardView) itemView.findViewById(R.id.card_view);
             cardLayout = (LinearLayout) itemView.findViewById(R.id.weather_card_layout);
             location = (TextView) cardView.findViewById(R.id.location);
@@ -94,7 +102,14 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
                 @Override
                 public void onClick(View v) {
                     selectedLocations.remove(getAdapterPosition());
-                    deleteItem.removeFromView();
+                    weatherAdapter.notifyDataSetChanged();
+//                    if (deleteItem != null) {
+//                        Log.d(TAG, "Delete item isn't null and should be removed from view");
+//                        deleteItem.removeFromView();
+//                    }
+//                    else{
+//                        Log.wtf(TAG, "deleteItem is null");
+//                    }
                 }
             });
 
@@ -108,6 +123,11 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
             SelectedLocations selectedLocationsInfo = selectedLocations.get(getAdapterPosition());
             Toast.makeText(context, selectedLocationsInfo.city + " " + selectedLocationsInfo.state + " "
                 + selectedLocationsInfo.country, Toast.LENGTH_LONG).show();
+        }
+
+        public void removeData(int postion){
+            selectedLocations.remove(postion);
+
         }
     }
 }
