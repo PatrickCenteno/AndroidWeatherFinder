@@ -94,7 +94,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
             Log.d(TAG, "position: " + getAdapterPosition());
             SelectedLocations selectedLocationsInfo = selectedLocations.get(getAdapterPosition());
             Toast.makeText(context, selectedLocationsInfo.city + " " + selectedLocationsInfo.state + " "
-                + selectedLocationsInfo.ipAddress, Toast.LENGTH_LONG).show();
+                + selectedLocationsInfo.country, Toast.LENGTH_LONG).show();
         }
     }
 }

@@ -52,20 +52,23 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
-        if (apiClient == null) {
-            apiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
+
+        // If no internet connection is present, dont give the user
+        // An option to try to obtain a location or weather
         if(isOnline()) {
             setContentView(R.layout.activity_main);
+            if (apiClient == null) {
+                apiClient = new GoogleApiClient.Builder(this)
+                        .addConnectionCallbacks(this)
+                        .addOnConnectionFailedListener(this)
+                        .addApi(LocationServices.API)
+                        .build();
+            }
             toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-            initList();
+            selectedLocations = new ArrayList<>();
 
             recyclerView = (RecyclerView) findViewById(R.id.weather_list);
             llm = new LinearLayoutManager(this);
@@ -76,6 +79,7 @@ public class MainActivity extends AppCompatActivity
 
             listEmpty = (TextView) findViewById(R.id.listIsEmpty);
             myPlaces = (TextView) findViewById(R.id.my_places);
+
             if (selectedLocations.size() > 0){
                 listEmpty.setVisibility(View.GONE);
                 myPlaces.setVisibility(View.VISIBLE);
@@ -111,18 +115,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    // Simply for testing
-    private void initList(){
-        selectedLocations = new ArrayList<>();
-        // Pull from shared preferences and load the list
-////         Some dummy locations just for testin
-//        selectedLocations.add(new SelectedLocations("Brooklyn", "New York", "US", "11.1.1.1."));
-//        selectedLocations.add(new SelectedLocations("Los Angles", "California", "US", "11.1.1.1.434"));
-//        selectedLocations.add(new SelectedLocations("London", "", "England", "4.3.4122..2"));
-//        selectedLocations.add(new SelectedLocations("Blakdf", "sdfsdf", "sdfsdfs", "747474747474"));
-//        selectedLocations.add(new SelectedLocations("Brooklyn", "New York", "US", "11.1.1.1."));
-//        selectedLocations.add(new SelectedLocations("Brooklyn", "New York", "US", "11.1.1.1."));
-    }
 
     public boolean isOnline(){
         ConnectivityManager cm =
@@ -138,9 +130,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onfindLocationClick() {
-        //Toast.makeText(this, "Latitude: " + latitude + " Longitude: " + longitude, Toast.LENGTH_LONG).show();
         startIntentService();
-
     }
 
     @Override
