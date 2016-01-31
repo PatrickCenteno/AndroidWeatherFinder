@@ -53,17 +53,19 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
 
+        // Connect to google API first
+        if (apiClient == null) {
+            apiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+
         // If no internet connection is present, dont give the user
         // An option to try to obtain a location or weather
         if(isOnline()) {
             setContentView(R.layout.activity_main);
-            if (apiClient == null) {
-                apiClient = new GoogleApiClient.Builder(this)
-                        .addConnectionCallbacks(this)
-                        .addOnConnectionFailedListener(this)
-                        .addApi(LocationServices.API)
-                        .build();
-            }
             toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayShowTitleEnabled(false);

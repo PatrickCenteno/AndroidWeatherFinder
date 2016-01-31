@@ -86,8 +86,8 @@ public class FetchAddressIntentService extends IntentService {
             String city = "";
             if (addresses.get(0).getLocality() != null)
                 city = addresses.get(0).getLocality();
-            else if (addresses.get(0).getAdminArea() != null)
-                city = addresses.get(0).getAdminArea();
+            else if (addresses.get(0).getSubLocality() != null)
+                city = addresses.get(0).getSubLocality();
             else
                 city = "not yet found";
             String state = addresses.get(0).getAdminArea();
