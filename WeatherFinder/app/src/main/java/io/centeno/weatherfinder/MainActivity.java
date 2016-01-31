@@ -31,7 +31,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
     implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
-        ,LocationChooserDialog.LocationDialogListener{
+        ,LocationChooserDialog.LocationDialogListener, WeatherAdapter.WeatherViewHolder.DeleteItem{
 
     private final String TAG = "MainActivity";
 
@@ -156,6 +156,11 @@ public class MainActivity extends AppCompatActivity
     protected void onResume(){
         if(isOnline())  apiClient.connect();
         super.onResume();
+    }
+
+    @Override
+    public void removeFromView() {
+        weatherAdapter.notifyDataSetChanged();
     }
 
     @Override

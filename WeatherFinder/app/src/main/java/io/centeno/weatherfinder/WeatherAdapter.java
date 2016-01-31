@@ -74,7 +74,13 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         protected List<SelectedLocations> selectedLocations;
         protected Context context;
 
-        public WeatherViewHolder(View itemView, List<SelectedLocations> selectedLocations, Context context) {
+        public interface DeleteItem{
+            public void removeFromView();
+        }
+
+        DeleteItem deleteItem;
+
+        public WeatherViewHolder(View itemView, final List<SelectedLocations> selectedLocations, Context context) {
             super(itemView);
             Log.d(TAG, "Locations list size: " + selectedLocations.size());
             this.selectedLocations = selectedLocations;
@@ -84,6 +90,13 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
             location = (TextView) cardView.findViewById(R.id.location);
             ipAddress = (TextView) cardView.findViewById(R.id.ip_address);
             delete = (TextView) cardView.findViewById(R.id.delete);
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    selectedLocations.remove(getAdapterPosition());
+                    deleteItem.removeFromView();
+                }
+            });
 
             cardLayout.setOnClickListener(this);
         }
