@@ -92,12 +92,19 @@ public class FetchAddressIntentService extends IntentService {
                 city = addresses.get(0).getLocality();
             else if (addresses.get(0).getSubLocality() != null)
                 city = addresses.get(0).getSubLocality();
-            else
-                city = "not yet found";
-            String state = addresses.get(0).getAdminArea();
-            String country = addresses.get(0).getCountryName();
 
-            deliverResultToReceiver(Constants.SUCCESS_RESULT, city, state, country, errorMessage);
+            // Ensure that state is not null and when doing international
+            // addresses
+            String state = "";
+            if(addresses.get(0).getAdminArea() != null){
+                state = addresses.get(0).getAdminArea();
+            }
+            String country = addresses.get(0).getCountryName();
+            String latitude = String.valueOf(addresses.get(0).getLatitude());
+            String longitude = String.valueOf(addresses.get(0).getLongitude());
+
+            deliverResultToReceiver(Constants.SUCCESS_RESULT, city, state, country,
+                    latitude, longitude, errorMessage);
 
         }
     }
@@ -124,11 +131,13 @@ public class FetchAddressIntentService extends IntentService {
      * so it can be displayed in the RecyclerView
      */
     private void deliverResultToReceiver(int resulCode, String city, String state,
-            String country, String errorMessage){
+            String country, String latitude, String longitude, String errorMessage){
         Bundle bundle = new Bundle();
         bundle.putString("city", city);
         bundle.putString("state", state);
         bundle.putString("country", country);
+        bundle.putString("latitude", latitude);
+        bundle.putString("longitude", longitude);
         bundle.putString(Constants.RESULT_DATA_KEY, errorMessage);
         mReceiver.send(resulCode, bundle);
     }

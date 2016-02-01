@@ -150,6 +150,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+
     /********************************
      *
      * Google Api Location Methods
@@ -231,7 +232,10 @@ public class MainActivity extends AppCompatActivity
             String city = resultData.getString("city");
             String state = resultData.getString("state");
             String country = resultData.getString("country");
-            selectedLocations.add(new SelectedLocations(city, state, country));
+            String latitude = resultData.getString("latitude");
+            String longitude = resultData.getString("longitude");
+            selectedLocations.add(new SelectedLocations(city, state, country
+                    ,latitude, longitude));
             weatherAdapter.notifyDataSetChanged();
             displayList();
 

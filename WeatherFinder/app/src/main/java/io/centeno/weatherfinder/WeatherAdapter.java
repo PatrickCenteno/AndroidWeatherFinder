@@ -47,7 +47,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         SelectedLocations info = selectedLocations.get(i);
 
         // Check whether or not its internation and has a state
-        if(info.state != "") {
+        if(info.state.equals("")) {
             weatherViewHolder.location.setText(info.city + ", " + info.state + ", "
                     + info.country);
         }else{
