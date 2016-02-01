@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity
         // An option to try to obtain a location or weather
         if(isOnline()) {
             setContentView(R.layout.activity_main);
+
             toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -82,22 +83,9 @@ public class MainActivity extends AppCompatActivity
             listEmpty = (TextView) findViewById(R.id.listIsEmpty);
             myPlaces = (TextView) findViewById(R.id.my_places);
 
-            if (selectedLocations.size() > 0){
-                listEmpty.setVisibility(View.GONE);
-                myPlaces.setVisibility(View.VISIBLE);
-            }
+            displayList();
             addressResultReceiver = new AddressResultReceiver(new Handler());
 
-
-
-            // Notify main activity when delete is fired off in RecyclerView
-//            deleteItem = new WeatherAdapter.WeatherViewHolder.DeleteItem() {
-//                @Override
-//                public void removeFromView() {
-//                    Log.d(TAG, "Delete Item is initialized");
-//                    weatherAdapter.notifyDataSetChanged();
-//                }
-//            };
 
         }else {
             Toast.makeText(this, "Check your Internet Connection before starting.",
@@ -128,29 +116,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-
-    public boolean isOnline(){
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
-
-    public void showDiaglog(){
-        DialogFragment dialog = new LocationChooserDialog();
-        dialog.show(getFragmentManager(), TAG);
-    }
-
-    @Override
-    public void onfindLocationClick() {
-        startIntentService();
-    }
-
-    @Override
-    public void onSetLocationClick() {
-
-    }
-
     @Override
     protected void onStop() {
         if(isOnline())  apiClient.disconnect();
@@ -169,10 +134,26 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
     }
 
-//    @Override
-//    public void removeFromView() {
-//        weatherAdapter.notifyDataSetChanged();
-//    }
+
+    /********************************
+     *
+     * LocationChooserDialog Event methods
+     *
+     */
+    @Override
+    public void onfindLocationClick() {
+        startIntentService();
+    }
+
+    @Override
+    public void onSetLocationClick() {
+
+    }
+
+    /********************************
+     *
+     * Google Api Location Methods
+     */
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -198,11 +179,31 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+
+    public boolean isOnline(){
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    public void showDiaglog(){
+        DialogFragment dialog = new LocationChooserDialog();
+        dialog.show(getFragmentManager(), TAG);
+    }
+
     private void startIntentService(){
         Intent intent = new Intent(this, FetchAddressIntentService.class);
         intent.putExtra(Constants.RECEIVER, addressResultReceiver);
         intent.putExtra(Constants.LOCATION_DATA_EXTRA, lastLocation);
         startService(intent);
+    }
+
+    private void displayList(){
+        if (selectedLocations.size() > 0){
+            listEmpty.setVisibility(View.GONE);
+            myPlaces.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -232,10 +233,7 @@ public class MainActivity extends AppCompatActivity
             String country = resultData.getString("country");
             selectedLocations.add(new SelectedLocations(city, state, country));
             weatherAdapter.notifyDataSetChanged();
-            if (selectedLocations.size() > 0){
-                listEmpty.setVisibility(View.GONE);
-                myPlaces.setVisibility(View.VISIBLE);
-            }
+            displayList();
 
         }
     }

@@ -76,16 +76,12 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         protected WeatherAdapter weatherAdapter;
         protected Context context;
 
-//        public interface DeleteItem{
-//            void removeFromView();
-//        }
-//
-//        DeleteItem deleteItem;
 
-//        public void setDeleteItem(DeleteItem deleteItem){
-//            this.deleteItem = deleteItem;
-//        }
-
+        /**
+         *
+         * Passing an instance of the weather adapter so we can call
+         * notifyDataSetHasChanged() when an a selectedLocation is removed
+         */
         public WeatherViewHolder(View itemView, final List<SelectedLocations> selectedLocations,
                                  final Context context, final WeatherAdapter weatherAdapter) {
             super(itemView);
@@ -93,8 +89,10 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
             this.selectedLocations = selectedLocations;
             this.context = context;
             this.weatherAdapter = weatherAdapter;
+
             cardView = (CardView) itemView.findViewById(R.id.card_view);
             cardLayout = (LinearLayout) itemView.findViewById(R.id.weather_card_layout);
+
             location = (TextView) cardView.findViewById(R.id.location);
             ipAddress = (TextView) cardView.findViewById(R.id.ip_address);
             delete = (TextView) cardView.findViewById(R.id.delete);
@@ -103,13 +101,6 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
                 public void onClick(View v) {
                     selectedLocations.remove(getAdapterPosition());
                     weatherAdapter.notifyDataSetChanged();
-//                    if (deleteItem != null) {
-//                        Log.d(TAG, "Delete item isn't null and should be removed from view");
-//                        deleteItem.removeFromView();
-//                    }
-//                    else{
-//                        Log.wtf(TAG, "deleteItem is null");
-//                    }
                 }
             });
 
@@ -125,9 +116,5 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
                 + selectedLocationsInfo.country, Toast.LENGTH_LONG).show();
         }
 
-        public void removeData(int postion){
-            selectedLocations.remove(postion);
-
-        }
     }
 }

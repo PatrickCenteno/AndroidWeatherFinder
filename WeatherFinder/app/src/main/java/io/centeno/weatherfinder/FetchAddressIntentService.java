@@ -83,6 +83,10 @@ public class FetchAddressIntentService extends IntentService {
             deliverResultToReceiver(Constants.FAILURE_RESULT, errorMessage);
         }
         else{
+
+            // Sometimes the city is displayed in different places. It can be
+            // the locality or SubLocailty. Instantiates the city string based
+            // on which one isnt null
             String city = "";
             if (addresses.get(0).getLocality() != null)
                 city = addresses.get(0).getLocality();
@@ -109,7 +113,16 @@ public class FetchAddressIntentService extends IntentService {
         mReceiver.send(resultCode, bundle);
     }
 
-    // Overloaded Results sender
+    /**
+     *
+     * @param resulCode
+     * @param city
+     * @param state
+     * @param country
+     * @param errorMessage
+     * Overloaded method that sends the locaation contents to the MainActivity
+     * so it can be displayed in the RecyclerView
+     */
     private void deliverResultToReceiver(int resulCode, String city, String state,
             String country, String errorMessage){
         Bundle bundle = new Bundle();

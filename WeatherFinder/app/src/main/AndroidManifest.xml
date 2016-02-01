@@ -18,7 +18,8 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:configChanges="keyboard||keyboardHidden||orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,7 +28,8 @@
         </activity>
         <activity
             android:name=".DisplayWeatherActivity"
-            android:label="@string/title_activity_display_weather" >
+            android:label="@string/title_activity_display_weather"
+            android:configChanges="keyboard||keyboardHidden||orientation">
         </activity>
     </application>
 

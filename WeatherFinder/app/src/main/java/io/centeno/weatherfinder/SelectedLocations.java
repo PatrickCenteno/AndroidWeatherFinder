@@ -43,7 +43,4 @@ public class SelectedLocations {
         this.ipAddress = ipAddress;
     }
 
-    private void findLocation(){
-        // TODO
-    }
 }
