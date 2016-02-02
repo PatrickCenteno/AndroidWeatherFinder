@@ -1,6 +1,7 @@
 package io.centeno.weatherfinder;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -47,7 +47,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         SelectedLocations info = selectedLocations.get(i);
 
         // Check whether or not its internation and has a state
-        if(info.state.equals("")) {
+        if(!info.state.equals("")) {
             weatherViewHolder.location.setText(info.city + ", " + info.state + ", "
                     + info.country);
         }else{
@@ -93,7 +93,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
             cardView = (CardView) itemView.findViewById(R.id.card_view);
             cardLayout = (LinearLayout) itemView.findViewById(R.id.weather_card_layout);
 
-            location = (TextView) cardView.findViewById(R.id.location);
+            location = (TextView) cardView.findViewById(R.id.location_display_weather);
             ipAddress = (TextView) cardView.findViewById(R.id.ip_address);
             delete = (TextView) cardView.findViewById(R.id.delete);
             delete.setOnClickListener(new View.OnClickListener() {
@@ -112,8 +112,17 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
             Log.d(TAG, "Entered onClick");
             Log.d(TAG, "position: " + getAdapterPosition());
             SelectedLocations selectedLocationsInfo = selectedLocations.get(getAdapterPosition());
-            Toast.makeText(context, selectedLocationsInfo.city + " " + selectedLocationsInfo.state + " "
-                + selectedLocationsInfo.country, Toast.LENGTH_LONG).show();
+
+            Intent intent = new Intent(context, DisplayWeatherActivity.class);
+            // Put the longitude and latitude of of location, as well the address info
+            intent.putExtra("latitude", selectedLocationsInfo.latitude);
+            intent.putExtra("longitude", selectedLocationsInfo.longitude);
+            intent.putExtra("city", selectedLocationsInfo.city);
+            intent.putExtra("state", selectedLocationsInfo.state);
+            intent.putExtra("country", selectedLocationsInfo.country);
+            context.startActivity(intent);
+//            Toast.makeText(context, selectedLocationsInfo.city + " " + selectedLocationsInfo.state + " "
+//                + selectedLocationsInfo.country, Toast.LENGTH_LONG).show();
         }
 
     }

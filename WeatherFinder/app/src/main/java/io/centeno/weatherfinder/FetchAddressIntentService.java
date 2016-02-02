@@ -96,8 +96,10 @@ public class FetchAddressIntentService extends IntentService {
             // Ensure that state is not null and when doing international
             // addresses
             String state = "";
+            Log.d(TAG, addresses.get(0).getAdminArea());
             if(addresses.get(0).getAdminArea() != null){
                 state = addresses.get(0).getAdminArea();
+                Log.d(TAG, state);
             }
             String country = addresses.get(0).getCountryName();
             String latitude = String.valueOf(addresses.get(0).getLatitude());
@@ -122,7 +124,7 @@ public class FetchAddressIntentService extends IntentService {
 
     /**
      *
-     * @param resulCode
+     * @param resultCode
      * @param city
      * @param state
      * @param country
@@ -130,7 +132,7 @@ public class FetchAddressIntentService extends IntentService {
      * Overloaded method that sends the locaation contents to the MainActivity
      * so it can be displayed in the RecyclerView
      */
-    private void deliverResultToReceiver(int resulCode, String city, String state,
+    private void deliverResultToReceiver(int resultCode, String city, String state,
             String country, String latitude, String longitude, String errorMessage){
         Bundle bundle = new Bundle();
         bundle.putString("city", city);
@@ -139,6 +141,6 @@ public class FetchAddressIntentService extends IntentService {
         bundle.putString("latitude", latitude);
         bundle.putString("longitude", longitude);
         bundle.putString(Constants.RESULT_DATA_KEY, errorMessage);
-        mReceiver.send(resulCode, bundle);
+        mReceiver.send(resultCode, bundle);
     }
 }
