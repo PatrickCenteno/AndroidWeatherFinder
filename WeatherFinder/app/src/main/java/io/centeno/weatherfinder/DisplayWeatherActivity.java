@@ -16,12 +16,16 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,10 +46,12 @@ public class DisplayWeatherActivity extends AppCompatActivity {
     private TextView locationDisplay;
     private TextView weatherDisplay;
     private NetworkImageView weatherIcon;
+    private ImageLoader imageLoader;
+    private DecimalFormat df;
 
 
     // openweathermap.org information
-    private final String IMAGE_URL = "http://openweathermap.org/img/w/";
+    private String imageUrl = "http://openweathermap.org/img/w/";
     private String url = "http://api.openweathermap.org/data/2.5/weather?";
     private final String API_KEY = "209bb1808f1fca53362d3704d127f45f";
 
@@ -59,6 +65,9 @@ public class DisplayWeatherActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.DOWN);
+
 
         if (!isOnline()){
             setContentView(R.layout.display_weather_no_internet);
@@ -68,17 +77,11 @@ public class DisplayWeatherActivity extends AppCompatActivity {
             // setContentView to main layout for activity
 
             // Build the parameters
-            buildParams();
+            params = buildParams(latitude, longitude);
 
             // Hit API endpoint to get weather Info
-            getWeather();
-
-
-//            locationDisplay = (TextView) findViewById(R.id.location_display_weather);
-//            weatherDisplay = (TextView) findViewById(R.id.location_display_weather);
-//            weatherIcon = (NetworkImageView) findViewById(R.id.weather_icon_display);
-
-            //locationDisplay.setText(city + ", " + state + ", " + country);
+            // Also sets main layout
+            getWeather(url, API_KEY, params);
 
         }
 
@@ -122,16 +125,29 @@ public class DisplayWeatherActivity extends AppCompatActivity {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    private void getWeather() {
+    private void getWeather(String url, String API_KEY, Map<String, String> params) {
         Log.d(TAG, "Making a request");
-        url += getParamsGET();
+        url += getParamsGET(params);
         Log.d(TAG, url);
         JSONObject response;
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(TAG, "Response: " + response.toString());
+                        try {
+                            Log.d(TAG, "Response: " + response.toString());
+                            initMainLayout();
+                            Double temp = Double.valueOf(response.getJSONObject("main").getString("temp"));
+                            weatherDisplay.setText(toFaren(temp));
+
+                            //Have to reset the imageURl before doing this
+                            JSONObject iconInfo = new JSONObject(response.getJSONArray("weather").getString(0));
+                            //Log.d(TAG, iconInfo.getString("icon"));
+                            imageUrl += createImageURL(iconInfo.getString("icon"));
+                            getImageIcon();
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                        }
                     }
                 }, new Response.ErrorListener() {
 
@@ -150,20 +166,67 @@ public class DisplayWeatherActivity extends AppCompatActivity {
      * Appends all the parameters into a string to append
      * on to the Api endpoint URL
      */
-    private String getParamsGET (){
+    private String getParamsGET (Map<String, String> params){
        return "lat=" + params.get("lat")
                + "&" + "lon=" + params.get("lon")
                + "&" + "appid=" + params.get("appid");
     }
 
     /**
-     * Instantiates the Hashmap and fills it with neccessary
-     * Parameters for api call
+     *
+     * @param latitude
+     * @param longitude
+     * @return
      */
-    private void buildParams(){
-        params = new HashMap<String, String>();
+    private Map<String, String> buildParams(String latitude, String longitude){
+        Map <String, String> params = new HashMap<String, String>();
         params.put("lat", latitude);
         params.put("lon", longitude);
         params.put("appid", API_KEY);
+        return params;
+    }
+
+    private void initMainLayout(){
+        setContentView(R.layout.activity_display_weather);
+        locationDisplay = (TextView) findViewById(R.id.location_display_weather);
+        weatherDisplay = (TextView) findViewById(R.id.temperature_display_weather);
+        weatherIcon = (NetworkImageView) findViewById(R.id.weather_icon_display);
+
+        if (state.equals("")) {
+            locationDisplay.setText("Weather for:\n" + city + ", " + country);
+        }else{
+            locationDisplay.setText("Weather for:\n" + city + ", " + state);
+        }
+
+    }
+
+    // Turns Kelvin temp into farenheit
+    private String toFaren(Double temp){
+        return df.format((temp - 273.15) * 1.8 + 32);
+    }
+
+    private void getImageIcon(){
+        imageLoader = APICaller.getInstance(this).getImageLoader();
+        weatherIcon.setImageUrl(imageUrl, imageLoader);
+//        float initHeight = weatherIcon.getHeight();
+//        float initWidth = weatherIcon.getWidth();
+//
+//        Log.d(TAG, initHeight + " " + initWidth + " ");
+//
+//        initHeight *= 1.4;
+//        initWidth *= 1.4;
+//
+//        Log.d(TAG, initHeight + " " + initWidth + "");
+//
+//        weatherIcon.setMinimumHeight((int) initHeight);
+//        weatherIcon.setMinimumWidth((int) initWidth);
+//
+//        Log.d(TAG, weatherIcon.getHeight() + " " + weatherIcon.getWidth() + "");
+//        //weatherIcon.setScaleType(ImageView.ScaleType.FIT_XY);
+
+    }
+
+    private String createImageURL(String icon){
+        return icon + ".png";
     }
 }

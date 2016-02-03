@@ -11,30 +11,32 @@
         android:id="@+id/include"></include>
 
     <com.android.volley.toolbox.NetworkImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:adjustViewBounds="true"
         android:id="@+id/weather_icon_display"
-        android:layout_below="@+id/include"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="120dp" />
+        android:layout_above="@+id/location_display_weather"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:id="@+id/location_display_weather"
-        android:layout_below="@+id/weather_icon_display"
-        android:layout_alignStart="@+id/temperature_display_weather"
-        android:layout_marginTop="52dp" />
+        android:gravity="center"
+        android:text=""
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/temperature_display_weather"
+        android:gravity="center"
+        android:text=""
         android:layout_below="@+id/location_display_weather"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp" />
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>
