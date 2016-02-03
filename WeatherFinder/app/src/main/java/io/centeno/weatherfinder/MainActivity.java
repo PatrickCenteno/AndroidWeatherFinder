@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSetLocationClick() {
-
+        Toast.makeText(this, "Feature not available yet", Toast.LENGTH_LONG).show();
     }
 
 
