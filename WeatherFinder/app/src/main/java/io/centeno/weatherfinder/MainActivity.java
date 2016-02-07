@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Places;
 
 
 import java.util.ArrayList;
@@ -59,6 +60,9 @@ public class MainActivity extends AppCompatActivity
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
+                    .addApi(Places.GEO_DATA_API)
+                    .addApi(Places.PLACE_DETECTION_API)
+                    .enableAutoManage(this, this)
                     .build();
         }
 
@@ -147,7 +151,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSetLocationClick() {
-        Toast.makeText(this, "Feature not available yet", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Feature not available yet", Toast.LENGTH_LONG).show();
+        showPlacePickerDialog();
     }
 
 
@@ -191,6 +196,11 @@ public class MainActivity extends AppCompatActivity
     public void showDiaglog(){
         DialogFragment dialog = new LocationChooserDialog();
         dialog.show(getFragmentManager(), TAG);
+    }
+
+    public void showPlacePickerDialog(){
+        DialogFragment dialogFragment = new PlacePickerDialog();
+        dialogFragment.show(getFragmentManager(), TAG);
     }
 
     private void startIntentService(){
