@@ -35,9 +35,7 @@ public class DisplayWeatherActivity extends AppCompatActivity {
 
     private String latitude;
     private String longitude;
-    private String city;
-    private String state;
-    private String country;
+    private String address;
     private Map<String,String> params;
 
     private Bundle bundle;
@@ -113,9 +111,7 @@ public class DisplayWeatherActivity extends AppCompatActivity {
         bundle = getIntent().getExtras();
         latitude = bundle.getString("latitude");
         longitude = bundle.getString("longitude");
-        city = bundle.getString("city");
-        state = bundle.getString("state");
-        country = bundle.getString("country");
+        address = bundle.getString("address");
     }
 
     public boolean isOnline(){
@@ -191,12 +187,16 @@ public class DisplayWeatherActivity extends AppCompatActivity {
         locationDisplay = (TextView) findViewById(R.id.location_display_weather);
         weatherDisplay = (TextView) findViewById(R.id.temperature_display_weather);
         weatherIcon = (NetworkImageView) findViewById(R.id.weather_icon_display);
+        locationDisplay.setText("Weather for: " + address);
 
-        if (state.equals("")) {
-            locationDisplay.setText("Weather for:\n" + city + ", " + country);
-        }else{
-            locationDisplay.setText("Weather for:\n" + city + ", " + state);
-        }
+//        if (!address.equals("")){
+//            locationDisplay.setText("Weather for");
+//        }
+//        if (state.equals("")) {
+//            locationDisplay.setText("Weather for:\n" + city + ", " + country);
+//        }else{
+//            locationDisplay.setText("Weather for:\n" + city + ", " + state);
+//        }
 
     }
 

@@ -10,11 +10,11 @@ public class SelectedLocations {
     protected String latitude;
     protected String longitude;
     protected String ipAddress;
+    protected String address;
     protected String zipCode;
 
-    public SelectedLocations(String city, String country, String latitude, String longitude) {
-        this.city = city;
-        this.country = country;
+    public SelectedLocations(String address, String latitude, String longitude) {
+        this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
     }

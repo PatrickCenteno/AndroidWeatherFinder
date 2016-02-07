@@ -24,6 +24,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLng;
 
 
 import java.util.ArrayList;
@@ -217,6 +218,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void addFromPlacePicker(String address, LatLng location){
+        selectedLocations.add(new SelectedLocations(address,
+                Double.toString(location.latitude), Double.toString(location.longitude)));
+        weatherAdapter.notifyDataSetChanged();
+        displayList();
+    }
+
     /**
      * Receiver for data sent from FetchAddressIntentService.
      */
@@ -239,12 +247,10 @@ public class MainActivity extends AppCompatActivity
             if (resultCode == Constants.SUCCESS_RESULT) {
                 Toast.makeText(getApplicationContext(), "Address Found", Toast.LENGTH_LONG).show();
             }
-            String city = resultData.getString("city");
-            String state = resultData.getString("state");
-            String country = resultData.getString("country");
+            String address = resultData.getString("address");
             String latitude = resultData.getString("latitude");
             String longitude = resultData.getString("longitude");
-            selectedLocations.add(new SelectedLocations(city, state, country
+            selectedLocations.add(new SelectedLocations(address
                     ,latitude, longitude));
             weatherAdapter.notifyDataSetChanged();
             displayList();

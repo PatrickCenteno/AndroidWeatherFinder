@@ -45,14 +45,19 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
     @Override
     public void onBindViewHolder(WeatherViewHolder weatherViewHolder, int i) {
         SelectedLocations info = selectedLocations.get(i);
+        weatherViewHolder.location.setText(info.address);
 
-        // Check whether or not its internation and has a state
-        if(!info.state.equals("")) {
-            weatherViewHolder.location.setText(info.city + ", " + info.state + ", "
-                    + info.country);
-        }else{
-            weatherViewHolder.location.setText(info.city + ", " + info.country);
-        }
+//        // Check whether or not its internation and has a state
+//        // This needs to be checked over better
+//        if(!info.address.equals("")){
+//            weatherViewHolder.location.setText(info.address);
+//        }
+//        else if(!info.state.equals("")) {
+//            weatherViewHolder.location.setText(info.city + ", " + info.state + ", "
+//                    + info.country);
+//        }else{
+//            weatherViewHolder.location.setText(info.city + ", " + info.country);
+//        }
 
         weatherViewHolder.ipAddress.setText(info.ipAddress);
     }
@@ -117,9 +122,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
             // Put the longitude and latitude of of location, as well the address info
             intent.putExtra("latitude", selectedLocationsInfo.latitude);
             intent.putExtra("longitude", selectedLocationsInfo.longitude);
-            intent.putExtra("city", selectedLocationsInfo.city);
-            intent.putExtra("state", selectedLocationsInfo.state);
-            intent.putExtra("country", selectedLocationsInfo.country);
+            intent.putExtra("address", selectedLocationsInfo.address);
             context.startActivity(intent);
 //            Toast.makeText(context, selectedLocationsInfo.city + " " + selectedLocationsInfo.state + " "
 //                + selectedLocationsInfo.country, Toast.LENGTH_LONG).show();

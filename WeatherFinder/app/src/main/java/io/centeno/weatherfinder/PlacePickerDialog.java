@@ -36,7 +36,12 @@ public class PlacePickerDialog extends DialogFragment {
         fragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                Log.d(TAG, "Place: " + place.getName());
+                Log.d(TAG, "Place: " + place.getName() + place.getLatLng() +
+                        " " + place.getAddress());
+                ((MainActivity)getActivity())
+                        .addFromPlacePicker(place.getAddress().toString(), place.getLatLng());
+
+
             }
 
             @Override
