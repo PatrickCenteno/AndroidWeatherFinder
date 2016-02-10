@@ -3,6 +3,9 @@ package io.centeno.weatherfinder;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +23,16 @@ public class PlacePickerDialog extends DialogFragment {
 
     PlaceAutocompleteFragment fragment;
     private final String TAG = "PlacePickerDialog";
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        FragmentManager fm = getActivity().getFragmentManager();
+        Fragment fragment = (fm.findFragmentById(R.id.autocomplete_location));
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.remove(fragment);
+        ft.commit();
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -40,15 +53,17 @@ public class PlacePickerDialog extends DialogFragment {
                         " " + place.getAddress());
                 ((MainActivity)getActivity())
                         .addFromPlacePicker(place.getAddress().toString(), place.getLatLng());
-
-
+                dismiss();
             }
 
             @Override
             public void onError(Status status) {
                 Log.d(TAG, "An error has occured: " + status);
+                dismiss();
             }
         });
+
+
 
         return builder.create();
     }

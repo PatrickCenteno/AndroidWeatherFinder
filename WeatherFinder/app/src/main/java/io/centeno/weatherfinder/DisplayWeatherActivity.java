@@ -9,8 +9,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
-import android.widget.ImageView;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -19,13 +19,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
-import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,8 +42,7 @@ public class DisplayWeatherActivity extends AppCompatActivity {
     private TextView weatherDisplay;
     private NetworkImageView weatherIcon;
     private ImageLoader imageLoader;
-    private DecimalFormat df;
-
+    private ProgressBar weatherLoading;
 
     // openweathermap.org information
     private String imageUrl = "http://openweathermap.org/img/w/";
@@ -56,21 +52,19 @@ public class DisplayWeatherActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.display_weather_loading);
+        setContentView(R.layout.activity_display_weather);
         getFromBundle();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        df = new DecimalFormat("#.##");
-        df.setRoundingMode(RoundingMode.DOWN);
-
 
         if (!isOnline()){
             setContentView(R.layout.display_weather_no_internet);
         }
         else{
+            initMainLayout();
             // Make neccessary API calls and when info is received
             // setContentView to main layout for activity
 
@@ -132,7 +126,6 @@ public class DisplayWeatherActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         try {
                             Log.d(TAG, "Response: " + response.toString());
-                            initMainLayout();
                             Double temp = Double.valueOf(response.getJSONObject("main").getString("temp"));
                             weatherDisplay.setText(toFaren(temp));
 
@@ -183,47 +176,38 @@ public class DisplayWeatherActivity extends AppCompatActivity {
     }
 
     private void initMainLayout(){
-        setContentView(R.layout.activity_display_weather);
         locationDisplay = (TextView) findViewById(R.id.location_display_weather);
         weatherDisplay = (TextView) findViewById(R.id.temperature_display_weather);
         weatherIcon = (NetworkImageView) findViewById(R.id.weather_icon_display);
+        weatherLoading = (ProgressBar) findViewById(R.id.weather_loading);
         locationDisplay.setText("Weather for: " + address);
 
-//        if (!address.equals("")){
-//            locationDisplay.setText("Weather for");
-//        }
-//        if (state.equals("")) {
-//            locationDisplay.setText("Weather for:\n" + city + ", " + country);
-//        }else{
-//            locationDisplay.setText("Weather for:\n" + city + ", " + state);
-//        }
+    }
 
+    private void showMainLayout(){
+        weatherLoading.setVisibility(View.GONE);
+        locationDisplay.setVisibility(View.VISIBLE);
+        weatherDisplay.setVisibility(View.VISIBLE);
+        weatherIcon.setVisibility(View.VISIBLE);
+    }
+
+    private void resetMainLayout(){
+        address = "";
+        weatherLoading.setVisibility(View.VISIBLE);
+        locationDisplay.setVisibility(View.GONE);
+        weatherDisplay.setVisibility(View.GONE);
+        weatherIcon.setVisibility(View.GONE);
     }
 
     // Turns Kelvin temp into farenheit
     private String toFaren(Double temp){
-        return df.format((temp - 273.15) * 1.8 + 32);
+        return Double.toString(Math.round((temp - 273.15) * 1.8 + 32));
     }
 
     private void getImageIcon(){
         imageLoader = APICaller.getInstance(this).getImageLoader();
         weatherIcon.setImageUrl(imageUrl, imageLoader);
-//        float initHeight = weatherIcon.getHeight();
-//        float initWidth = weatherIcon.getWidth();
-//
-//        Log.d(TAG, initHeight + " " + initWidth + " ");
-//
-//        initHeight *= 1.4;
-//        initWidth *= 1.4;
-//
-//        Log.d(TAG, initHeight + " " + initWidth + "");
-//
-//        weatherIcon.setMinimumHeight((int) initHeight);
-//        weatherIcon.setMinimumWidth((int) initWidth);
-//
-//        Log.d(TAG, weatherIcon.getHeight() + " " + weatherIcon.getWidth() + "");
-//        //weatherIcon.setScaleType(ImageView.ScaleType.FIT_XY);
-
+        showMainLayout();
     }
 
     private String createImageURL(String icon){

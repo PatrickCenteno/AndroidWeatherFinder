@@ -27,12 +27,6 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         this.context = context;
     }
 
-    public void addToLocations(SelectedLocations l){
-        selectedLocations.add(l);
-        notifyDataSetChanged();
-    }
-
-
     @Override
     public WeatherViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View viewItem = LayoutInflater.from(
@@ -59,7 +53,6 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
 //            weatherViewHolder.location.setText(info.city + ", " + info.country);
 //        }
 
-        weatherViewHolder.ipAddress.setText(info.ipAddress);
     }
 
     @Override
@@ -74,7 +67,6 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
 
         protected LinearLayout cardLayout;
         protected TextView location;
-        protected TextView ipAddress;
         protected TextView delete;
         protected CardView cardView;
         protected List<SelectedLocations> selectedLocations;
@@ -99,7 +91,6 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
             cardLayout = (LinearLayout) itemView.findViewById(R.id.weather_card_layout);
 
             location = (TextView) cardView.findViewById(R.id.location_display_weather);
-            ipAddress = (TextView) cardView.findViewById(R.id.ip_address);
             delete = (TextView) cardView.findViewById(R.id.delete);
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
