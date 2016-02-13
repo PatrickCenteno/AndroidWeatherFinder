@@ -55,9 +55,9 @@ public class DisplayWeatherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display_weather);
         getFromBundle();
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.include_display);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+       // getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 
         if (!isOnline()){
@@ -73,7 +73,7 @@ public class DisplayWeatherActivity extends AppCompatActivity {
 
             // Hit API endpoint to get weather Info
             // Also sets main layout
-            getWeather(url, API_KEY, params);
+            getWeather(url, imageUrl, params);
 
         }
 
@@ -94,7 +94,7 @@ public class DisplayWeatherActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.refresh) {
             return true;
         }
 
@@ -115,16 +115,20 @@ public class DisplayWeatherActivity extends AppCompatActivity {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    private void getWeather(String url, String API_KEY, Map<String, String> params) {
+    private void getWeather(String url, String imageUrl, Map<String, String> params) {
         Log.d(TAG, "Making a request");
         url += getParamsGET(params);
+
+        // Doing this so we can access passed imageUrl in the inner class
+        final String tempUrl = imageUrl;
         Log.d(TAG, url);
-        JSONObject response;
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+                            // Setting final String to newImageUrl for access in innerclass
+                            String newImageUrl = tempUrl;
                             Log.d(TAG, "Response: " + response.toString());
                             Double temp = Double.valueOf(response.getJSONObject("main").getString("temp"));
                             weatherDisplay.setText(toFaren(temp));
@@ -132,8 +136,8 @@ public class DisplayWeatherActivity extends AppCompatActivity {
                             //Have to reset the imageURl before doing this
                             JSONObject iconInfo = new JSONObject(response.getJSONArray("weather").getString(0));
                             //Log.d(TAG, iconInfo.getString("icon"));
-                            imageUrl += createImageURL(iconInfo.getString("icon"));
-                            getImageIcon();
+                            newImageUrl += createImageURL(iconInfo.getString("icon"));
+                            getImageIcon(newImageUrl);
                         }catch (JSONException e){
                             e.printStackTrace();
                         }
@@ -204,7 +208,7 @@ public class DisplayWeatherActivity extends AppCompatActivity {
         return Double.toString(Math.round((temp - 273.15) * 1.8 + 32));
     }
 
-    private void getImageIcon(){
+    private void getImageIcon(String imageUrl){
         imageLoader = APICaller.getInstance(this).getImageLoader();
         weatherIcon.setImageUrl(imageUrl, imageLoader);
         showMainLayout();

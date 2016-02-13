@@ -72,9 +72,9 @@ public class MainActivity extends AppCompatActivity
         if(isOnline()) {
             setContentView(R.layout.activity_main);
 
-            toolbar = (Toolbar) findViewById(R.id.toolbar);
+            toolbar = (Toolbar) findViewById(R.id.include_main);
             setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
+           // getSupportActionBar().setDisplayShowTitleEnabled(false);
 
             selectedLocations = new ArrayList<>();
 

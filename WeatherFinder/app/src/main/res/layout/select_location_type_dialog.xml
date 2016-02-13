@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/appwhite">
 
 
     <RelativeLayout
@@ -19,7 +20,8 @@
             android:id="@+id/current"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
-            android:textSize="16dp" />
+            android:textSize="16dp"
+            android:textColor="@color/main" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -46,7 +48,8 @@
             android:layout_alignParentStart="true"
             android:text="@string/select_location"
             android:id="@+id/select"
-            android:textSize="16dp" />
+            android:textSize="16dp"
+            android:textColor="@color/main" />
 
         <ImageView
             android:layout_width="wrap_content"

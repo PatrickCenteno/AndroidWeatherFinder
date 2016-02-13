@@ -1,19 +1,25 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="windowNoTitle">true</item>
-        <!--We will be using the toolbar so no need to show ActionBar-->
-        <item name="windowActionBar">false</item>
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/main</item>
+        <item name="android:textColorPrimary">@color/main</item>
+        <item name="android:textColorSecondary">@color/main_dark</item>
+        <item name="android:colorBackground">@color/appwhite</item>
         <item name="colorPrimaryDark">@color/main_dark</item>
+
     </style>
 
-    <style name="ToolbarTheme" parent="Widget.AppCompat.Toolbar">
+    <style name="ToolbarTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:textColorPrimary">@color/appwhite</item>
         <item name="colorPrimary">@color/main</item>
+        <item name="android:textColorSecondary">@color/appwhite</item>
         <item name="colorAccent">#43A047</item>
+    </style>
+
+    <style name="popUpTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:colorBackground">@color/appwhite</item>
+        <item name="android:textColor">@color/main</item>
     </style>
 
     <color name="main">#4CAF50</color>
