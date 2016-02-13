@@ -29,6 +29,7 @@ import java.util.Map;
 public class DisplayWeatherActivity extends AppCompatActivity {
 
     private final String TAG = "DisplayWeatherActivity";
+    final String DEGREE  = "\u00b0";
 
     private String latitude;
     private String longitude;
@@ -40,6 +41,9 @@ public class DisplayWeatherActivity extends AppCompatActivity {
 
     private TextView locationDisplay;
     private TextView weatherDisplay;
+    private TextView weatherDescription;
+    private TextView minTemp;
+    private TextView maxTemp;
     private NetworkImageView weatherIcon;
     private ImageLoader imageLoader;
     private ProgressBar weatherLoading;
@@ -134,8 +138,12 @@ public class DisplayWeatherActivity extends AppCompatActivity {
                             // Setting final String to newImageUrl for access in innerclass
                             String newImageUrl = tempUrl;
                             Log.d(TAG, "Response: " + response.toString());
-                            Double temp = Double.valueOf(response.getJSONObject("main").getString("temp"));
-                            weatherDisplay.setText(toFaren(temp));
+                            Double mainTemp = Double.valueOf(response.getJSONObject("main").getString("temp"));
+
+                            weatherDisplay.setText(toFaren(mainTemp));
+                            JSONObject weatherDescriptionInfo = new JSONObject(
+                                    response.getJSONArray("weather").getString(0));
+                            weatherDescription.setText(weatherDescriptionInfo.getString("main"));
 
                             //Have to reset the imageURl before doing this
                             JSONObject iconInfo = new JSONObject(response.getJSONArray("weather").getString(0));
@@ -186,10 +194,10 @@ public class DisplayWeatherActivity extends AppCompatActivity {
     private void initMainLayout(){
         locationDisplay = (TextView) findViewById(R.id.location_display_weather);
         weatherDisplay = (TextView) findViewById(R.id.temperature_display_weather);
+        weatherDescription = (TextView) findViewById(R.id.weather_description);
         weatherIcon = (NetworkImageView) findViewById(R.id.weather_icon_display);
         weatherLoading = (ProgressBar) findViewById(R.id.weather_loading);
         locationDisplay.setText("Weather for: " + address);
-
     }
 
     private void showMainLayout(){
@@ -197,6 +205,7 @@ public class DisplayWeatherActivity extends AppCompatActivity {
         locationDisplay.setVisibility(View.VISIBLE);
         weatherDisplay.setVisibility(View.VISIBLE);
         weatherIcon.setVisibility(View.VISIBLE);
+        weatherDescription.setVisibility(View.VISIBLE);
     }
 
     private void resetMainLayout(){
@@ -205,11 +214,14 @@ public class DisplayWeatherActivity extends AppCompatActivity {
         locationDisplay.setVisibility(View.GONE);
         weatherDisplay.setVisibility(View.GONE);
         weatherIcon.setVisibility(View.GONE);
+        weatherDescription.setVisibility(View.GONE);
     }
 
     // Turns Kelvin temp into farenheit
     private String toFaren(Double temp){
-        return Double.toString(Math.round((temp - 273.15) * 1.8 + 32));
+        return (int)(Math.round
+                ((temp - 273.15) * 1.8 + 32))
+                + DEGREE + "F";
     }
 
     private void getImageIcon(String imageUrl){

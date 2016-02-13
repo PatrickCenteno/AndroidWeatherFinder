@@ -4,8 +4,11 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/toolbar"
+        android:minHeight="?attr/actionBarSize"
+        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="72dp"
+        android:elevation="3dp"
         android:background="@color/main"
         app:theme="@style/ToolbarTheme"
         app:popupTheme="@style/popUpTheme">

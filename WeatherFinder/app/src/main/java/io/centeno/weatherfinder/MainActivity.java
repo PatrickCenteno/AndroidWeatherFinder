@@ -3,6 +3,7 @@ package io.centeno.weatherfinder;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -138,7 +139,6 @@ public class MainActivity extends AppCompatActivity
         if(isOnline())  apiClient.connect();
         super.onResume();
     }
-
 
     /********************************
      *

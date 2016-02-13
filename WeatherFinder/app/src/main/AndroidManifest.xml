@@ -29,7 +29,7 @@
 
         <activity
             android:name=".MainActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation"
+            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,7 +39,7 @@
         </activity>
         <activity
             android:name=".DisplayWeatherActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation"
+            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
             android:label="@string/title_activity_display_weather">
         </activity>
     </application>
