@@ -8,21 +8,5 @@
         android:title="@string/refresh_weather"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/tet"
-        android:orderInCategory="100"
-        android:title="@string/refresh_weather"
-        app:showAsAction="never" />
-
-    <item
-        android:id="@+id/adfs"
-        android:orderInCategory="100"
-        android:title="@string/refresh_weather"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/sdfse"
-        android:orderInCategory="100"
-        android:title="@string/refresh_weather"
-        app:showAsAction="never" />
 
 </menu>

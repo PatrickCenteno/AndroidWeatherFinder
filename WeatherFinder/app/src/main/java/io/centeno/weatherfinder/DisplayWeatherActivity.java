@@ -95,6 +95,10 @@ public class DisplayWeatherActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.refresh) {
+            resetMainLayout();
+            if (params != null) {
+                getWeather(url, imageUrl, params);
+            }
             return true;
         }
 
