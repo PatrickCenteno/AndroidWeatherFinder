@@ -1,12 +1,16 @@
 package io.centeno.weatherfinder;
 
 import android.app.DialogFragment;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +18,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,8 +33,10 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends AppCompatActivity
@@ -42,12 +49,13 @@ public class MainActivity extends AppCompatActivity
     private TextView listEmpty;
     private TextView myPlaces;
     private RecyclerView recyclerView;
-    private List<SelectedLocations> selectedLocations;
+    public ArrayList<SelectedLocations> selectedLocations;
     private WeatherAdapter weatherAdapter;
     private LinearLayoutManager llm;
     private GoogleApiClient apiClient;
     private Location lastLocation;
     private AddressResultReceiver addressResultReceiver;
+    private LocationsDBHelper dbHelper;
     private String latitude;
     private String longitude;
 
@@ -55,29 +63,33 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
-
-        // Connect to google API first
-        if (apiClient == null) {
-            apiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .addApi(Places.GEO_DATA_API)
-                    .addApi(Places.PLACE_DETECTION_API)
-                    .enableAutoManage(this, this)
-                    .build();
-        }
+        Log.d(TAG, "onCreate() called in main activity");
 
         // If no internet connection is present, dont give the user
         // An option to try to obtain a location or weather
         if(isOnline()) {
+            // Connect to google API first
+            if (apiClient == null) {
+                apiClient = new GoogleApiClient.Builder(this)
+                        .addConnectionCallbacks(this)
+                        .addOnConnectionFailedListener(this)
+                        .addApi(LocationServices.API)
+                        .addApi(Places.GEO_DATA_API)
+                        .addApi(Places.PLACE_DETECTION_API)
+                        .enableAutoManage(this, this)
+                        .build();
+            }
+            // Read in values from DB and initalize the arraylist
             setContentView(R.layout.activity_main);
+            dbHelper = new LocationsDBHelper(this);
 
             toolbar = (Toolbar) findViewById(R.id.include_main);
             setSupportActionBar(toolbar);
            // getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+            //Initialize arraylist from db query
             selectedLocations = new ArrayList<>();
+            initList();
 
             recyclerView = (RecyclerView) findViewById(R.id.weather_list);
             llm = new LinearLayoutManager(this);
@@ -125,6 +137,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         if(isOnline())  apiClient.disconnect();
+        Log.d(TAG, "onStop() is called");
+        new WriteToDB().execute(dbHelper);
         super.onStop();
     }
 
@@ -138,6 +152,14 @@ public class MainActivity extends AppCompatActivity
     protected void onResume(){
         if(isOnline())  apiClient.connect();
         super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart() is called");
+        // Initalize arraslist from db call
+        initList();
     }
 
     /********************************
@@ -218,6 +240,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void initList(){
+        new ReadFromDB().execute(dbHelper);
+    }
+
     public void addFromPlacePicker(String address, LatLng location){
         selectedLocations.add(new SelectedLocations(address,
                 Double.toString(location.latitude), Double.toString(location.longitude)));
@@ -255,6 +281,85 @@ public class MainActivity extends AppCompatActivity
             weatherAdapter.notifyDataSetChanged();
             displayList();
 
+        }
+    }
+
+    class WriteToDB extends AsyncTask<LocationsDBHelper, Void, Void>{
+
+        @Override
+        protected Void doInBackground(LocationsDBHelper... dbHelpers) {
+            SQLiteDatabase db = dbHelpers[0].getWritableDatabase();
+            ContentValues values;
+            long newRowid;
+            Log.d(TAG, "WriteToBD() called");
+
+            // Only make db query if there are items in the  RecyclerView
+            if (!selectedLocations.isEmpty()) {
+
+                // Start from a blank table
+                db.execSQL(LocationsDB.RESET_TABLE);
+                db.execSQL(LocationsDB.CREATE_TABLE);
+                Log.d(TAG, "Writing to db now");
+                for (SelectedLocations s : selectedLocations) {
+                    values = new ContentValues();
+                    values.put(LocationsDB.COLUMN_ADDRESS, s.address);
+                    values.put(LocationsDB.COLUMN_LAT, s.latitude);
+                    values.put(LocationsDB.COLUMN_LON, s.longitude);
+
+                    // Insert values map into db
+                    newRowid = db.insert(
+                            LocationsDB.TABLE_NAME,
+                            null,
+                            values);
+                    Log.d(TAG, Long.toString(newRowid));
+                }
+            }
+            return null;
+        }
+    }
+
+    class ReadFromDB extends AsyncTask<LocationsDBHelper, Void, Void>{
+        @Override
+        protected Void doInBackground(LocationsDBHelper... dbHelpers) {
+            SQLiteDatabase db = dbHelpers[0].getReadableDatabase();
+
+            // query to get all locations
+            String query = "SELECT " + LocationsDB.COLUMN_ADDRESS + ", "
+                    + LocationsDB.COLUMN_LAT + ", "
+                    + LocationsDB.COLUMN_LON + " FROM " + LocationsDB.TABLE_NAME;
+            Log.d(TAG, "Query: " + query);
+
+            // Runs the query and returns a cursor, which allows
+            // for row by row access of the result (in the case the whole table)
+            Cursor cursor = db.rawQuery(query, null);
+
+            SelectedLocations sl = null;
+            if (cursor.moveToNext()){
+                selectedLocations.clear();
+                do{
+                    String address = cursor.getString(0);
+                    String lat = cursor.getString(1);
+                    String lon = cursor.getString(2);
+                    Log.d(TAG, address + " " + lat + " " + lon);
+                    sl = new SelectedLocations(address, lat, lon);
+                    selectedLocations.add(sl);
+                }while (cursor.moveToNext());
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            if (weatherAdapter != null) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "On UI thread and weather adapter is being updated");
+                        weatherAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
         }
     }
 

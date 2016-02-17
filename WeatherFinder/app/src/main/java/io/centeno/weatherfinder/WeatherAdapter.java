@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,10 +20,10 @@ import java.util.List;
 public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>  {
 
     private final String TAG = "WeatherAdapter";
-    private List<SelectedLocations> selectedLocations;
+    private ArrayList<SelectedLocations> selectedLocations;
     Context context;
 
-    public WeatherAdapter(List<SelectedLocations> selectedLocations, Context context) {
+    public WeatherAdapter(ArrayList<SelectedLocations> selectedLocations, Context context) {
         this.selectedLocations = selectedLocations;
         this.context = context;
     }
@@ -69,7 +70,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
         protected TextView location;
         protected TextView delete;
         protected CardView cardView;
-        protected List<SelectedLocations> selectedLocations;
+        protected ArrayList<SelectedLocations> selectedLocations;
         protected WeatherAdapter weatherAdapter;
         protected Context context;
 
@@ -79,7 +80,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
          * Passing an instance of the weather adapter so we can call
          * notifyDataSetHasChanged() when an a selectedLocation is removed
          */
-        public WeatherViewHolder(View itemView, final List<SelectedLocations> selectedLocations,
+        public WeatherViewHolder(View itemView, final ArrayList<SelectedLocations> selectedLocations,
                                  final Context context, final WeatherAdapter weatherAdapter) {
             super(itemView);
             Log.d(TAG, "Locations list size: " + selectedLocations.size());
