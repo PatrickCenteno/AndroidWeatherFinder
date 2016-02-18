@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:id="@+id/weather_card_layout"
-        android:background="@color/appwhite">
+        android:background="@drawable/ripple">
 
         <TextView
             android:layout_width="wrap_content"
@@ -29,6 +29,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/main_dark"
             android:textAppearance="?android:attr/textAppearanceSmall"
+            android:background="@drawable/ripple"
             android:text="Delete"
             android:id="@+id/delete"
             android:layout_gravity="right"

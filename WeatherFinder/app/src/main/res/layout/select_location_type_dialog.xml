@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/find_location_layout"
         android:clickable="true"
+        android:background="@drawable/ripple"
         android:padding="20dp">
 
         <TextView
@@ -39,6 +40,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/select_location_layout"
         android:clickable="true"
+        android:background="@drawable/ripple"
         android:padding="20dp">
 
         <TextView
