@@ -1,7 +1,6 @@
 package io.centeno.weatherfinder;
 
 import android.content.Context;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -16,10 +15,6 @@ public class LocationsDBHelper extends SQLiteOpenHelper {
 
     public LocationsDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
-
-    public LocationsDBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
-        super(context, name, factory, version, errorHandler);
     }
 
     @Override

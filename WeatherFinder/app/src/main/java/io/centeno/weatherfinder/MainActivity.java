@@ -4,21 +4,19 @@ import android.app.DialogFragment;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,16 +30,12 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends AppCompatActivity
-    implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
-        ,LocationChooserDialog.LocationDialogListener{
+        implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
+        , LocationChooserDialog.LocationDialogListener {
 
     private final String TAG = "MainActivity";
 
@@ -67,7 +61,7 @@ public class MainActivity extends AppCompatActivity
 
         // If no internet connection is present, dont give the user
         // An option to try to obtain a location or weather
-        if(isOnline()) {
+        if (isOnline()) {
             // Connect to google API first
             if (apiClient == null) {
                 apiClient = new GoogleApiClient.Builder(this)
@@ -85,7 +79,6 @@ public class MainActivity extends AppCompatActivity
 
             toolbar = (Toolbar) findViewById(R.id.include_main);
             setSupportActionBar(toolbar);
-           // getSupportActionBar().setDisplayShowTitleEnabled(false);
 
             //Initialize arraylist from db query
             selectedLocations = new ArrayList<>();
@@ -105,7 +98,7 @@ public class MainActivity extends AppCompatActivity
             addressResultReceiver = new AddressResultReceiver(new Handler());
 
 
-        }else {
+        } else {
             Toast.makeText(this, "Check your Internet Connection before starting.",
                     Toast.LENGTH_LONG).show();
         }
@@ -127,7 +120,7 @@ public class MainActivity extends AppCompatActivity
 
         int id = item.getItemId();
 
-        if (id == R.id.add_location){
+        if (id == R.id.add_location) {
             showDiaglog();
         }
 
@@ -136,7 +129,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onStop() {
-        if(isOnline())  apiClient.disconnect();
+        if (isOnline()) apiClient.disconnect();
         Log.d(TAG, "onStop() is called");
         new WriteToDB().execute(dbHelper);
         super.onStop();
@@ -144,13 +137,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onPause() {
-        if(isOnline())  apiClient.disconnect();
+        if (isOnline()) apiClient.disconnect();
         super.onPause();
     }
 
     @Override
-    protected void onResume(){
-        if(isOnline())  apiClient.connect();
+    protected void onResume() {
+        if (isOnline()) apiClient.connect();
         super.onResume();
     }
 
@@ -163,9 +156,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /********************************
-     *
      * LocationChooserDialog Event methods
-     *
      */
     @Override
     public void onfindLocationClick() {
@@ -180,7 +171,6 @@ public class MainActivity extends AppCompatActivity
 
 
     /********************************
-     *
      * Google Api Location Methods
      */
 
@@ -189,11 +179,11 @@ public class MainActivity extends AppCompatActivity
         try {
             lastLocation = LocationServices.FusedLocationApi
                     .getLastLocation(apiClient);
-            if (lastLocation != null){
+            if (lastLocation != null) {
                 latitude = String.valueOf(lastLocation.getLatitude());
                 longitude = String.valueOf(lastLocation.getLongitude());
             }
-        }catch (SecurityException e){
+        } catch (SecurityException e) {
             e.printStackTrace();
         }
     }
@@ -209,42 +199,42 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public boolean isOnline(){
+    public boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    public void showDiaglog(){
+    public void showDiaglog() {
         DialogFragment dialog = new LocationChooserDialog();
         dialog.show(getFragmentManager(), TAG);
     }
 
-    public void showPlacePickerDialog(){
+    public void showPlacePickerDialog() {
         DialogFragment dialogFragment = new PlacePickerDialog();
         dialogFragment.show(getFragmentManager(), TAG);
     }
 
-    private void startIntentService(){
+    private void startIntentService() {
         Intent intent = new Intent(this, FetchAddressIntentService.class);
         intent.putExtra(Constants.RECEIVER, addressResultReceiver);
         intent.putExtra(Constants.LOCATION_DATA_EXTRA, lastLocation);
         startService(intent);
     }
 
-    private void displayList(){
-        if (selectedLocations.size() > 0){
+    private void displayList() {
+        if (selectedLocations.size() > 0) {
             listEmpty.setVisibility(View.GONE);
             myPlaces.setVisibility(View.VISIBLE);
         }
     }
 
-    private void initList(){
+    private void initList() {
         new ReadFromDB().execute(dbHelper);
     }
 
-    public void addFromPlacePicker(String address, LatLng location){
+    public void addFromPlacePicker(String address, LatLng location) {
         selectedLocations.add(new SelectedLocations(address,
                 Double.toString(location.latitude), Double.toString(location.longitude)));
         weatherAdapter.notifyDataSetChanged();
@@ -260,7 +250,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         /**
-         *  Receives data sent from FetchAddressIntentService and updates the UI in MainActivity.
+         * Receives data sent from FetchAddressIntentService and updates the UI in MainActivity.
          */
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
@@ -277,22 +267,26 @@ public class MainActivity extends AppCompatActivity
             String latitude = resultData.getString("latitude");
             String longitude = resultData.getString("longitude");
             selectedLocations.add(new SelectedLocations(address
-                    ,latitude, longitude));
+                    , latitude, longitude));
             weatherAdapter.notifyDataSetChanged();
             displayList();
 
         }
     }
 
-    class WriteToDB extends AsyncTask<LocationsDBHelper, Void, Void>{
+    /**
+     * Accepts the SQLlite Database helper class so that
+     * It can write contents of Weather adapter to SQlite Databse
+     */
+    class WriteToDB extends AsyncTask<LocationsDBHelper, Void, Void> {
 
         @Override
         protected Void doInBackground(LocationsDBHelper... dbHelpers) {
             SQLiteDatabase db = dbHelpers[0].getWritableDatabase();
             ContentValues values;
             long newRowid;
-            Log.d(TAG, "WriteToBD() called");
 
+            // Clears and resets the table everytime
             db.execSQL(LocationsDB.RESET_TABLE);
             db.execSQL(LocationsDB.CREATE_TABLE);
             // Only make db query if there are items in the  RecyclerView
@@ -317,7 +311,12 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    class ReadFromDB extends AsyncTask<LocationsDBHelper, Void, Void>{
+    /**
+     * Accepts the SQLlite Database helper class so that
+     * It can read the contents of the locattions table
+     * and store them in the weatherAdapter
+     */
+    class ReadFromDB extends AsyncTask<LocationsDBHelper, Void, Void> {
         @Override
         protected Void doInBackground(LocationsDBHelper... dbHelpers) {
             SQLiteDatabase db = dbHelpers[0].getReadableDatabase();
@@ -326,23 +325,22 @@ public class MainActivity extends AppCompatActivity
             String query = "SELECT " + LocationsDB.COLUMN_ADDRESS + ", "
                     + LocationsDB.COLUMN_LAT + ", "
                     + LocationsDB.COLUMN_LON + " FROM " + LocationsDB.TABLE_NAME;
-            Log.d(TAG, "Query: " + query);
 
             // Runs the query and returns a cursor, which allows
             // for row by row access of the result (in the case the whole table)
             Cursor cursor = db.rawQuery(query, null);
 
             SelectedLocations sl = null;
-            if (cursor.moveToNext()){
+            if (cursor.moveToNext()) {
                 selectedLocations.clear();
-                do{
+                do {
                     String address = cursor.getString(0);
                     String lat = cursor.getString(1);
                     String lon = cursor.getString(2);
                     Log.d(TAG, address + " " + lat + " " + lon);
                     sl = new SelectedLocations(address, lat, lon);
                     selectedLocations.add(sl);
-                }while (cursor.moveToNext());
+                } while (cursor.moveToNext());
             }
 
             return null;

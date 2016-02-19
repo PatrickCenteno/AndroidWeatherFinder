@@ -24,6 +24,11 @@ public class PlacePickerDialog extends DialogFragment {
     PlaceAutocompleteFragment fragment;
     private final String TAG = "PlacePickerDialog";
 
+    /**
+     * Must Overides the method to properly destory
+     * PlaceAutocompleteFragment. Other wise a NullPointerException
+     * is thrown when another dialog attempts to be inflated
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -46,6 +51,8 @@ public class PlacePickerDialog extends DialogFragment {
         fragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.autocomplete_location);
 
+        // Sends the results of the place picker to MainACtivity so it can
+        // be put in the WeatherAdapter
         fragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {

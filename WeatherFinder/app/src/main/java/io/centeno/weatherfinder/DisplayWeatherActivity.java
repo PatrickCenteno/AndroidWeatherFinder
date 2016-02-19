@@ -42,8 +42,6 @@ public class DisplayWeatherActivity extends AppCompatActivity {
     private TextView locationDisplay;
     private TextView weatherDisplay;
     private TextView weatherDescription;
-    private TextView minTemp;
-    private TextView maxTemp;
     private NetworkImageView weatherIcon;
     private ImageLoader imageLoader;
     private ProgressBar weatherLoading;
@@ -61,7 +59,6 @@ public class DisplayWeatherActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.include_display);
         setSupportActionBar(toolbar);
-       // getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 
         if (!isOnline()){
@@ -123,20 +120,28 @@ public class DisplayWeatherActivity extends AppCompatActivity {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    private void getWeather(String url, String imageUrl, Map<String, String> params) {
+    /**
+     *
+     * @param url
+     * @param imageUrl
+     * @param params
+     * Accepts api url, url for weather icon and a map of http request params
+     * Retreives weather information JSON and weather icon, parses and display
+     * as in proper views. Disables progressbar and displays main layout.
+     * showMainLayout() called in getImageIcon(String newImageUrl).
+     */
+    private void getWeather(String url, final String imageUrl, Map<String, String> params) {
         Log.d(TAG, "Making a request");
         url += getParamsGET(params);
 
-        // Doing this so we can access passed imageUrl in the inner class
-        final String tempUrl = imageUrl;
         Log.d(TAG, url);
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            // Setting final String to newImageUrl for access in innerclass
-                            String newImageUrl = tempUrl;
+                            // Setting param imageURL to newImageUrl for access in innerclass
+                            String newImageUrl = imageUrl;
                             Log.d(TAG, "Response: " + response.toString());
                             Double mainTemp = Double.valueOf(response.getJSONObject("main").getString("temp"));
 
@@ -224,6 +229,7 @@ public class DisplayWeatherActivity extends AppCompatActivity {
                 + DEGREE + "F";
     }
 
+    // showMainLayout() called in here so that displays when everything is done
     private void getImageIcon(String imageUrl){
         imageLoader = APICaller.getInstance(this).getImageLoader();
         weatherIcon.setImageUrl(imageUrl, imageLoader);
