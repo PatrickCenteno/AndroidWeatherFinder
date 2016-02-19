@@ -98,6 +98,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.WeatherV
                 public void onClick(View v) {
                     selectedLocations.remove(getAdapterPosition());
                     weatherAdapter.notifyDataSetChanged();
+                    Log.d(TAG, "selectedLocation size: " + selectedLocations.size());
                 }
             });
 

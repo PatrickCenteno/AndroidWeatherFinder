@@ -293,12 +293,11 @@ public class MainActivity extends AppCompatActivity
             long newRowid;
             Log.d(TAG, "WriteToBD() called");
 
+            db.execSQL(LocationsDB.RESET_TABLE);
+            db.execSQL(LocationsDB.CREATE_TABLE);
             // Only make db query if there are items in the  RecyclerView
             if (!selectedLocations.isEmpty()) {
-
                 // Start from a blank table
-                db.execSQL(LocationsDB.RESET_TABLE);
-                db.execSQL(LocationsDB.CREATE_TABLE);
                 Log.d(TAG, "Writing to db now");
                 for (SelectedLocations s : selectedLocations) {
                     values = new ContentValues();
