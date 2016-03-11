@@ -1,8 +1,7 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="io.centeno.weatherfinder.DisplayWeatherActivity">
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <include
         layout="@layout/toolbar"
@@ -10,57 +9,20 @@
         android:layout_height="wrap_content"
         android:id="@+id/include_display"></include>
 
-    <com.android.volley.toolbox.NetworkImageView
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:adjustViewBounds="true"
-        android:id="@+id/weather_icon_display"
-        android:layout_above="@+id/location_display_weather"
-        android:layout_centerHorizontal="true"
-        android:visibility="visible"/>
+    <io.sideboard.Utilities.SlidingTabLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/tabs"
+        android:background="@color/main">
+    </io.sideboard.Utilities.SlidingTabLayout>
 
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/weather_loading"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:visibility="visible" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/location_display_weather"
-        android:gravity="center"
-        android:text=""
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/weather_description"
-        android:gravity="center"
-        android:text=""
-        android:layout_below="@+id/location_display_weather"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/temperature_display_weather"
-        android:gravity="center"
-        android:text=""
-        android:layout_below="@+id/weather_description"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone"/>
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:id="@+id/weatherpager">
+    </android.support.v4.view.ViewPager>
 
 
 
-</RelativeLayout>
+</LinearLayout>

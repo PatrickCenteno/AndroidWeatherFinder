@@ -3,78 +3,62 @@ package io.centeno.weatherfinder;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.NetworkImageView;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class DisplayWeatherActivity extends AppCompatActivity {
 
     private final String TAG = "DisplayWeatherActivity";
-    final String DEGREE  = "\u00b0";
+    private final int NUM_OF_TABS = 2;
+    Context context;
 
     private String latitude;
     private String longitude;
     private String address;
-    private Map<String,String> params;
 
-    private Bundle bundle;
+    private ViewPager weatherPager;
+    private SlidingTabLayout slidingTabLayout;
+    private WeatherFragmentAdapter adapter;
+
     private Toolbar toolbar;
 
-    private TextView locationDisplay;
-    private TextView weatherDisplay;
-    private TextView weatherDescription;
-    private NetworkImageView weatherIcon;
-    private ImageLoader imageLoader;
-    private ProgressBar weatherLoading;
-
-    // openweathermap.org information
-    private String imageUrl = "http://openweathermap.org/img/w/";
-    private String url = "http://api.openweathermap.org/data/2.5/weather?";
-    private final String API_KEY = "209bb1808f1fca53362d3704d127f45f";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_weather);
-        getFromBundle();
 
         toolbar = (Toolbar) findViewById(R.id.include_display);
         setSupportActionBar(toolbar);
+        context = this;
 
 
-        if (!isOnline()){
+        if (!isOnline()) {
             setContentView(R.layout.display_weather_no_internet);
-        }
-        else{
-            initMainLayout();
-            // Make neccessary API calls and when info is received
-            // setContentView to main layout for activity
+        } else {
+            adapter = new WeatherFragmentAdapter(getSupportFragmentManager(),
+                    getIntent().getExtras(), NUM_OF_TABS);
+            weatherPager = (ViewPager) findViewById(R.id.weatherpager);
+            weatherPager.setAdapter(adapter);
+            weatherPager.setOffscreenPageLimit(NUM_OF_TABS);
 
-            // Build the parameters
-            params = buildParams(latitude, longitude);
+            slidingTabLayout = (SlidingTabLayout) findViewById(R.id.tabs);
+            slidingTabLayout.setDistributeEvenly(true);
 
-            // Hit API endpoint to get weather Info
-            // Also sets main layout
-            getWeather(url, imageUrl, params);
+            slidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+                @Override
+                public int getIndicatorColor(int position) {
+                    return ContextCompat.getColor(context, R.color.appwhite);
+                }
+            });
+
+            slidingTabLayout.setViewPager(weatherPager);
 
         }
 
@@ -91,152 +75,18 @@ public class DisplayWeatherActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.refresh) {
-            resetMainLayout();
-            if (params != null) {
-                getWeather(url, imageUrl, params);
-            }
-            return true;
-        }
+        // as you specify a parent activity in AndroidManifest.xml
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void getFromBundle(){
-        bundle = getIntent().getExtras();
-        latitude = bundle.getString("latitude");
-        longitude = bundle.getString("longitude");
-        address = bundle.getString("address");
-    }
 
-    public boolean isOnline(){
+    public boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
-
-    /**
-     *
-     * @param url
-     * @param imageUrl
-     * @param params
-     * Accepts api url, url for weather icon and a map of http request params
-     * Retreives weather information JSON and weather icon, parses and display
-     * as in proper views. Disables progressbar and displays main layout.
-     * showMainLayout() called in getImageIcon(String newImageUrl).
-     */
-    private void getWeather(String url, final String imageUrl, Map<String, String> params) {
-        Log.d(TAG, "Making a request");
-        url += getParamsGET(params);
-
-        Log.d(TAG, url);
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            // Setting param imageURL to newImageUrl for access in innerclass
-                            String newImageUrl = imageUrl;
-                            Log.d(TAG, "Response: " + response.toString());
-                            Double mainTemp = Double.valueOf(response.getJSONObject("main").getString("temp"));
-
-                            weatherDisplay.setText(toFaren(mainTemp));
-                            JSONObject weatherDescriptionInfo = new JSONObject(
-                                    response.getJSONArray("weather").getString(0));
-                            weatherDescription.setText(weatherDescriptionInfo.getString("main"));
-
-                            //Have to reset the imageURl before doing this
-                            JSONObject iconInfo = new JSONObject(response.getJSONArray("weather").getString(0));
-                            //Log.d(TAG, iconInfo.getString("icon"));
-                            newImageUrl += createImageURL(iconInfo.getString("icon"));
-                            getImageIcon(newImageUrl);
-                        }catch (JSONException e){
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "Error: " + error);
-                    }
-                });
-
-        APICaller.getInstance(this).addToRequestQueue(jsObjRequest);
-    }
-
-    /**
-     *
-     * @return String
-     * Appends all the parameters into a string to append
-     * on to the Api endpoint URL
-     */
-    private String getParamsGET (Map<String, String> params){
-       return "lat=" + params.get("lat")
-               + "&" + "lon=" + params.get("lon")
-               + "&" + "appid=" + params.get("appid");
-    }
-
-    /**
-     *
-     * @param latitude
-     * @param longitude
-     * @return
-     */
-    private Map<String, String> buildParams(String latitude, String longitude){
-        Map <String, String> params = new HashMap<String, String>();
-        params.put("lat", latitude);
-        params.put("lon", longitude);
-        params.put("appid", API_KEY);
-        return params;
-    }
-
-    private void initMainLayout(){
-        locationDisplay = (TextView) findViewById(R.id.location_display_weather);
-        weatherDisplay = (TextView) findViewById(R.id.temperature_display_weather);
-        weatherDescription = (TextView) findViewById(R.id.weather_description);
-        weatherIcon = (NetworkImageView) findViewById(R.id.weather_icon_display);
-        weatherLoading = (ProgressBar) findViewById(R.id.weather_loading);
-        locationDisplay.setText("Weather for: " + address);
-    }
-
-    private void showMainLayout(){
-        weatherLoading.setVisibility(View.GONE);
-        locationDisplay.setVisibility(View.VISIBLE);
-        weatherDisplay.setVisibility(View.VISIBLE);
-        weatherIcon.setVisibility(View.VISIBLE);
-        weatherDescription.setVisibility(View.VISIBLE);
-    }
-
-    private void resetMainLayout(){
-        address = "";
-        weatherLoading.setVisibility(View.VISIBLE);
-        locationDisplay.setVisibility(View.GONE);
-        weatherDisplay.setVisibility(View.GONE);
-        weatherIcon.setVisibility(View.GONE);
-        weatherDescription.setVisibility(View.GONE);
-    }
-
-    // Turns Kelvin temp into farenheit
-    private String toFaren(Double temp){
-        return (int)(Math.round
-                ((temp - 273.15) * 1.8 + 32))
-                + DEGREE + "F";
-    }
-
-    // showMainLayout() called in here so that displays when everything is done
-    private void getImageIcon(String imageUrl){
-        imageLoader = APICaller.getInstance(this).getImageLoader();
-        weatherIcon.setImageUrl(imageUrl, imageLoader);
-        showMainLayout();
-    }
-
-    private String createImageURL(String icon){
-        return icon + ".png";
-    }
 }
+
+
