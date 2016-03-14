@@ -62,12 +62,15 @@ public class NowFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        Log.e(TAG, "onCreateView called");
         View rootView = inflater.inflate(R.layout.now_display, container, false);
+
+        // Get all Location data from mainActivity
         getFromArguments();
         initMainLayout(rootView);
+        // Build Params for Api Call
         params = buildParams(latitude, longitude);
-        Log.d(TAG, params.toString());
+        // Retrieve the weather and display it
+        getWeather(url, imageUrl, params);
 
 
         // TODO: add a pulldown to refresh widget

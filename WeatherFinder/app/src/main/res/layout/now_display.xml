@@ -4,11 +4,6 @@
     android:layout_height="match_parent"
     tools:context="io.centeno.weatherfinder.DisplayWeatherActivity">
 
-    <include
-        layout="@layout/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/include_display"></include>
 
     <com.android.volley.toolbox.NetworkImageView
         android:layout_width="75dp"
