@@ -62,10 +62,12 @@ public class NowFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Log.e(TAG, "onCreateView called");
         View rootView = inflater.inflate(R.layout.now_display, container, false);
         getFromArguments();
         initMainLayout(rootView);
         params = buildParams(latitude, longitude);
+        Log.d(TAG, params.toString());
 
 
         // TODO: add a pulldown to refresh widget
