@@ -53,6 +53,8 @@ public class NowFragment extends Fragment {
         // Required empty public constructor
     }
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,12 +66,13 @@ public class NowFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.now_display, container, false);
 
+        Log.d(TAG, "onCreateView called");
         // Get all Location data from mainActivity
         getFromArguments();
         initMainLayout(rootView);
         // Build Params for Api Call
         params = buildParams(latitude, longitude);
-        // Retrieve the weather and display it
+        // Retreiving weather
         getWeather(url, imageUrl, params);
 
 
@@ -77,6 +80,7 @@ public class NowFragment extends Fragment {
 
         return rootView;
     }
+
 
     /**
      *
@@ -88,7 +92,7 @@ public class NowFragment extends Fragment {
      * as in proper views. Disables progressbar and displays main layout.
      * showMainLayout() called in getImageIcon(String newImageUrl).
      */
-    private void getWeather(String url, final String imageUrl, Map<String, String> params) {
+    public void getWeather(String url, final String imageUrl, Map<String, String> params) {
         Log.d(TAG, "Making a request");
         url += getParamsGET(params);
 

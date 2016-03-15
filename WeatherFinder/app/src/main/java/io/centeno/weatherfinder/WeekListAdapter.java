@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
         holder.lowTemp.setText(info.lowTemp);
         holder.setImageView(info.imageIconCode);
     }
+
 
     @Override
     public int getItemCount() {

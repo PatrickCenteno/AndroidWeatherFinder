@@ -18,20 +18,31 @@ public class DisplayWeatherActivity extends AppCompatActivity {
     private final int NUM_OF_TABS = 2;
     Context context;
 
-
     private ViewPager weatherPager;
     private SlidingTabLayout slidingTabLayout;
     private WeatherFragmentAdapter adapter;
 
     private Toolbar toolbar;
 
+    public interface WeatherRequestListenerNow{
+        public void callGetWeather();
+    }
 
+    public interface WeatherRequestListenerWeek{
+        public void callGetWeather();
+    }
+
+    WeatherRequestListenerNow weatherRequestListenerNow;
+    WeatherRequestListenerWeek weatherRequestListenerWeek;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_weather);
+
+        weatherRequestListenerNow = (WeatherRequestListenerNow) this;
+        weatherRequestListenerWeek = (WeatherRequestListenerWeek) this;
 
         toolbar = (Toolbar) findViewById(R.id.include_display);
         setSupportActionBar(toolbar);
@@ -46,7 +57,26 @@ public class DisplayWeatherActivity extends AppCompatActivity {
             weatherPager = (ViewPager) findViewById(R.id.weatherpager);
             weatherPager.setAdapter(adapter);
             weatherPager.setOffscreenPageLimit(NUM_OF_TABS);
+            weatherPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    if (position == 0){
+                        weatherRequestListenerNow.callGetWeather();
+                    }else {
+                        weatherRequestListenerWeek.callGetWeather();
+                    }
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
             slidingTabLayout = (SlidingTabLayout) findViewById(R.id.tabs);
             slidingTabLayout.setDistributeEvenly(true);
 
@@ -86,6 +116,8 @@ public class DisplayWeatherActivity extends AppCompatActivity {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
+
+
 }
 
 
