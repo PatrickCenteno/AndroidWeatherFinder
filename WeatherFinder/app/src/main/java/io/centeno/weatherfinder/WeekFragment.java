@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass..
  */
-public class WeekFragment extends Fragment {
+public class WeekFragment extends Fragment implements DisplayWeatherActivity.WeatherRequestListenerWeek {
 
     public final int NUM_OF_DAYS = 7;
     private final String TAG = "WeekFragment";
@@ -80,6 +80,15 @@ public class WeekFragment extends Fragment {
 
 
         return rootView;
+    }
+
+    @Override
+    public void callGetWeather() {
+        Log.d(TAG, "callGetWeather() called");
+        if (params == null){
+            params = buildParams(latitude, longitude);
+        }
+        getWeather(url, imageUrl, params);
     }
 
     public void getWeather(String url, final String imageUrl, Map<String, String> params){

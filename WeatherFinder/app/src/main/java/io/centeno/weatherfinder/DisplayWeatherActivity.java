@@ -41,8 +41,8 @@ public class DisplayWeatherActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_weather);
 
-        weatherRequestListenerNow = (WeatherRequestListenerNow) this;
-        weatherRequestListenerWeek = (WeatherRequestListenerWeek) this;
+        weatherRequestListenerNow = new NowFragment();
+        weatherRequestListenerWeek = new WeekFragment();
 
         toolbar = (Toolbar) findViewById(R.id.include_display);
         setSupportActionBar(toolbar);

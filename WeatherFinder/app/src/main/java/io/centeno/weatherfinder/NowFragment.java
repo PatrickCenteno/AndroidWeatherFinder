@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NowFragment extends Fragment {
+public class NowFragment extends Fragment implements DisplayWeatherActivity.WeatherRequestListenerNow {
 
     private final String TAG = "NowFragment";
     final String DEGREE  = "\u00b0";
@@ -80,6 +80,15 @@ public class NowFragment extends Fragment {
 
         return rootView;
     }
+
+    @Override
+    public void callGetWeather() {
+        Log.d(TAG, "callGetWeather() called");
+        if(params != null){
+            getWeather(url, imageUrl, params);
+        }
+    }
+
 
 
     /**
