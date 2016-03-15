@@ -4,3 +4,5 @@ Android App that allows user to get weather information based on current locatio
 Retrieves all weather information from openweathermap.org
 
 Gets locatation information from Google Places API and Geocoder
+
+<b> Currently being updated. This is not a fully working build</b>
