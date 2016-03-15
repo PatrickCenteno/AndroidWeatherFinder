@@ -18,15 +18,14 @@ public class DisplayWeatherActivity extends AppCompatActivity {
     private final int NUM_OF_TABS = 2;
     Context context;
 
-    private String latitude;
-    private String longitude;
-    private String address;
 
     private ViewPager weatherPager;
     private SlidingTabLayout slidingTabLayout;
     private WeatherFragmentAdapter adapter;
 
     private Toolbar toolbar;
+
+
 
 
     @Override
