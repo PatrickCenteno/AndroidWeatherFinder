@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class NowFragment extends Fragment implements DisplayWeatherActivity.WeatherRequestListenerNow {
+public class NowFragment extends Fragment {
 
     private final String TAG = "NowFragment";
     final String DEGREE  = "\u00b0";
@@ -58,6 +58,12 @@ public class NowFragment extends Fragment implements DisplayWeatherActivity.Weat
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate called");
+        // Get all Location data from mainActivity
+        getFromArguments();
+        // Build Params for Api Call
+        params = buildParams(latitude, longitude);
+
     }
 
     @Override
@@ -67,11 +73,9 @@ public class NowFragment extends Fragment implements DisplayWeatherActivity.Weat
         View rootView = inflater.inflate(R.layout.now_display, container, false);
 
         Log.d(TAG, "onCreateView called");
-        // Get all Location data from mainActivity
-        getFromArguments();
+
+        // Initializes Layout with progress bar
         initMainLayout(rootView);
-        // Build Params for Api Call
-        params = buildParams(latitude, longitude);
         // Retreiving weather
         getWeather(url, imageUrl, params);
 
@@ -80,15 +84,6 @@ public class NowFragment extends Fragment implements DisplayWeatherActivity.Weat
 
         return rootView;
     }
-
-    @Override
-    public void callGetWeather() {
-        Log.d(TAG, "callGetWeather() called");
-        if(params != null){
-            getWeather(url, imageUrl, params);
-        }
-    }
-
 
 
     /**
@@ -101,7 +96,7 @@ public class NowFragment extends Fragment implements DisplayWeatherActivity.Weat
      * as in proper views. Disables progressbar and displays main layout.
      * showMainLayout() called in getImageIcon(String newImageUrl).
      */
-    public void getWeather(String url, final String imageUrl, Map<String, String> params) {
+    private void getWeather(String url, final String imageUrl, Map<String, String> params) {
         Log.d(TAG, "Making a request");
         url += getParamsGET(params);
 
@@ -215,6 +210,18 @@ public class NowFragment extends Fragment implements DisplayWeatherActivity.Weat
 
     private String createImageURL(String icon){
         return icon + ".png";
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
     }
 
     @Override

@@ -24,25 +24,11 @@ public class DisplayWeatherActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
 
-    public interface WeatherRequestListenerNow{
-        public void callGetWeather();
-    }
-
-    public interface WeatherRequestListenerWeek{
-        public void callGetWeather();
-    }
-
-    WeatherRequestListenerNow weatherRequestListenerNow;
-    WeatherRequestListenerWeek weatherRequestListenerWeek;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_weather);
-
-        weatherRequestListenerNow = new NowFragment();
-        weatherRequestListenerWeek = new WeekFragment();
 
         toolbar = (Toolbar) findViewById(R.id.include_display);
         setSupportActionBar(toolbar);
@@ -64,12 +50,9 @@ public class DisplayWeatherActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onPageSelected(int position) {
-                    if (position == 0){
-                        weatherRequestListenerNow.callGetWeather();
-                    }else {
-                        weatherRequestListenerWeek.callGetWeather();
-                    }
+                public void onPageSelected(int position){
+
+
                 }
 
                 @Override
