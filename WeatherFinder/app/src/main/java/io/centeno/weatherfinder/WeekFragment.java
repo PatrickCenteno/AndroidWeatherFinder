@@ -34,6 +34,7 @@ public class WeekFragment extends Fragment {
     public final int NUM_OF_DAYS = 7;
     private final String TAG = "WeekFragment";
     final String DEGREE  = "\u00b0";
+    private boolean called = false;
 
     private String latitude;
     private String longitude;
@@ -83,6 +84,15 @@ public class WeekFragment extends Fragment {
         return rootView;
     }
 
+    public void callGetWeather(){
+        if (!called){
+            called = true;
+            if (params != null){
+                getWeather(url, imageUrl, params);
+            }
+        }
+    }
+
     private void getWeather(String url, final String imageUrl, Map<String, String> params){
         url += getParamsGET(params);
         Log.d(TAG, url);
@@ -96,7 +106,7 @@ public class WeekFragment extends Fragment {
                             // Setting param imageURL to newImageUrl for access in innerclass
                             String newImageUrl = imageUrl;
                             Log.d(TAG, "Response: " + response.toString());
-                            Double mainTemp = Double.valueOf(response.getJSONObject("main").getString("temp"));
+                            //Double mainTemp = Double.valueOf(response.getJSONObject("main").getString("temp"));
 
                             JSONObject weatherDescriptionInfo = new JSONObject(
                                     response.getJSONArray("weather").getString(0));
@@ -161,22 +171,13 @@ public class WeekFragment extends Fragment {
         return icon + ".png";
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause");
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume");
-    }
 
     @Override
     public void onDetach() {
         super.onDetach();
     }
+
 
 
 }

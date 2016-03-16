@@ -13,6 +13,7 @@ public class WeatherFragmentAdapter extends FragmentStatePagerAdapter {
     CharSequence titles [] = {"Right Now", "Week"};
     Bundle extras;
     int numOfTabs;
+    private WeekFragment week;
 
     public WeatherFragmentAdapter(FragmentManager fm, Bundle extras, int numOfTabs) {
         super(fm);
@@ -35,6 +36,9 @@ public class WeatherFragmentAdapter extends FragmentStatePagerAdapter {
         else {
             WeekFragment weekFragment = new WeekFragment();
             weekFragment.setArguments(extras);
+            if (week == null){
+                week = weekFragment;
+            }
             return weekFragment;
         }
     }
@@ -43,4 +47,6 @@ public class WeatherFragmentAdapter extends FragmentStatePagerAdapter {
     public CharSequence getPageTitle(int position) {
         return titles[position];
     }
+
+    public WeekFragment getWeek() {return week; }
 }

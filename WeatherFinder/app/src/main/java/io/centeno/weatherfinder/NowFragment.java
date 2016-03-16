@@ -1,5 +1,7 @@
 package io.centeno.weatherfinder;
 
+import android.app.Activity;
+import android.net.Uri;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
@@ -52,7 +54,6 @@ public class NowFragment extends Fragment {
     public NowFragment() {
         // Required empty public constructor
     }
-
 
 
     @Override
@@ -212,20 +213,11 @@ public class NowFragment extends Fragment {
         return icon + ".png";
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause");
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume");
-    }
 
     @Override
     public void onDetach() {
         super.onDetach();
     }
+
 }

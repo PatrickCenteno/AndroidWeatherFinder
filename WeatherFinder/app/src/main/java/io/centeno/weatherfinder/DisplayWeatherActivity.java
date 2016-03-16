@@ -1,8 +1,11 @@
 package io.centeno.weatherfinder;
 
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -51,8 +54,10 @@ public class DisplayWeatherActivity extends AppCompatActivity {
 
                 @Override
                 public void onPageSelected(int position){
-
-
+                    if (position == 1){
+                        WeekFragment fragment = adapter.getWeek();
+                        fragment.callGetWeather();
+                    }
                 }
 
                 @Override
