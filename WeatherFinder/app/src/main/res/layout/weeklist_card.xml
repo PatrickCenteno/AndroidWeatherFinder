@@ -15,10 +15,8 @@
         android:id="@+id/week_card_layout">
 
         <com.android.volley.toolbox.NetworkImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
             android:adjustViewBounds="true"
             android:id="@+id/week_weather_image"/>
 

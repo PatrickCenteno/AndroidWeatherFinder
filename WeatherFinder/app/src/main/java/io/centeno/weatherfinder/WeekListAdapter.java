@@ -89,7 +89,8 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
         }
 
         public void setImageView(String iconCode){
-            // TODO
+            ImageLoader imageLoader = APICaller.getInstance(context).getImageLoader();
+            icon.setImageUrl("http://openweathermap.org/img/w/" + iconCode + ".png", imageLoader);
         }
 
     }

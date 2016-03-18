@@ -30,6 +30,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import java.util.ArrayList;
 
 
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
+        JodaTimeAndroid.init(this);
         Log.d(TAG, "onCreate() called in main activity");
 
         // If no internet connection is present, dont give the user

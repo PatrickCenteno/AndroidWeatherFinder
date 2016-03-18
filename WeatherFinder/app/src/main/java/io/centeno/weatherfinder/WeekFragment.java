@@ -18,10 +18,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
+import org.joda.time.LocalDate;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,13 +38,13 @@ public class WeekFragment extends Fragment {
 
     public final int NUM_OF_DAYS = 7;
     private final String TAG = "WeekFragment";
-    final String DEGREE  = "\u00b0";
+    final String DEGREE = "\u00b0";
     private boolean called = false;
 
     private String latitude;
     private String longitude;
     private String address;
-    private Map<String,String> params;
+    private Map<String, String> params;
 
     private RecyclerView weekRecycler;
     private LinearLayoutManager linearLayoutManager;
@@ -60,6 +65,7 @@ public class WeekFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate called");
+        JodaTimeAndroid.init(getActivity());
         getFromArguments();
         params = buildParams(latitude, longitude);
     }
@@ -76,24 +82,22 @@ public class WeekFragment extends Fragment {
         linearLayoutManager = new LinearLayoutManager(getActivity());
         weekRecycler.setLayoutManager(linearLayoutManager);
 
-        weekCardInfoArrayList = new ArrayList<>();
-        weekListAdapter = new WeekListAdapter(weekCardInfoArrayList, getActivity());
         Log.d(TAG, params.toString());
 
 
         return rootView;
     }
 
-    public void callGetWeather(){
-        if (!called){
+    public void callGetWeather() {
+        if (!called) {
             called = true;
-            if (params != null){
+            if (params != null) {
                 getWeather(url, imageUrl, params);
             }
         }
     }
 
-    private void getWeather(String url, final String imageUrl, Map<String, String> params){
+    private void getWeather(String url, final String imageUrl, final Map<String, String> params) {
         url += getParamsGET(params);
         Log.d(TAG, url);
         Log.d(TAG, params.toString());
@@ -105,13 +109,11 @@ public class WeekFragment extends Fragment {
                         try {
                             // Setting param imageURL to newImageUrl for access in innerclass
                             String newImageUrl = imageUrl;
-                            Log.d(TAG, "Response: " + response.toString());
-                            //Double mainTemp = Double.valueOf(response.getJSONObject("main").getString("temp"));
+                            weekCardInfoArrayList = parseResponse(response);
+                            weekListAdapter = new WeekListAdapter(weekCardInfoArrayList, getActivity());
 
-                            JSONObject weatherDescriptionInfo = new JSONObject(
-                                    response.getJSONArray("weather").getString(0));
-
-                        }catch (JSONException e){
+                            weekRecycler.setAdapter(weekListAdapter);
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
@@ -125,19 +127,18 @@ public class WeekFragment extends Fragment {
         APICaller.getInstance(getActivity()).addToRequestQueue(jsObjRequest);
     }
 
-    private void getFromArguments(){
+    private void getFromArguments() {
         address = getArguments().getString("address");
         latitude = getArguments().getString("latitude");
         longitude = getArguments().getString("longitude");
     }
 
     /**
-     *
      * @return String
      * Appends all the parameters into a string to append
      * on to the Api endpoint URL
      */
-    private String getParamsGET (Map<String, String> params){
+    private String getParamsGET(Map<String, String> params) {
         return "lat=" + params.get("lat")
                 + "&" + "lon=" + params.get("lon")
                 + "&" + "cnt=" + params.get("cnt")
@@ -145,13 +146,12 @@ public class WeekFragment extends Fragment {
     }
 
     /**
-     *
      * @param latitude
      * @param longitude
      * @return
      */
-    private Map<String, String> buildParams(String latitude, String longitude){
-        Map <String, String> params = new HashMap<String, String>();
+    private Map<String, String> buildParams(String latitude, String longitude) {
+        Map<String, String> params = new HashMap<String, String>();
         params.put("lat", latitude);
         params.put("lon", longitude);
         params.put("cnt", String.valueOf(NUM_OF_DAYS));
@@ -160,24 +160,44 @@ public class WeekFragment extends Fragment {
     }
 
     // Turns Kelvin temp into farenheit
-    private String toFaren(Double temp){
-        return (int)(Math.round
+    private String toFaren(Double temp) {
+        return (int) (Math.round
                 ((temp - 273.15) * 1.8 + 32))
                 + DEGREE + "F";
     }
 
+    private ArrayList<WeekCardInfo> parseResponse(JSONObject response) throws JSONException{
+        ArrayList<WeekCardInfo> temp = new ArrayList<>();
+        for (int i = 0; i < NUM_OF_DAYS; i++) {
+            // Getting the object from iteration of week array
+            JSONObject tempObject = new JSONObject(response.getJSONArray("list").getString(i));
+            String highTemp = tempObject.getJSONObject("temp").getString("max");
+            String lowTemp = tempObject.getJSONObject("temp").getString("min");
 
-    private String createImageURL(String icon){
-        return icon + ".png";
+            // Obtaining the image icon
+            JSONObject iconObject = new JSONObject(tempObject
+                    .getJSONArray("weather").getString(0));
+            String icon = iconObject.getString("icon");
+
+            //Getting the day for the week to add to arraylist
+            LocalDate localDate = LocalDate.now();
+            String day = localDate.plusDays(i).toString();
+            Log.d(TAG, highTemp + " " + lowTemp + " " + icon);
+            temp.add(new WeekCardInfo(icon, day, highTemp, lowTemp));
+        }
+
+        return temp;
     }
 
+    private String createImageURL(String icon) {
+        return icon + ".png";
+    }
 
 
     @Override
     public void onDetach() {
         super.onDetach();
     }
-
 
 
 }
