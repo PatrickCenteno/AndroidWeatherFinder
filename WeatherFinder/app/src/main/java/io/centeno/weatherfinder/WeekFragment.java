@@ -37,6 +37,17 @@ import java.util.Map;
 public class WeekFragment extends Fragment {
 
     public final int NUM_OF_DAYS = 7;
+
+    private final String [] DAYS = {
+            "null",
+            "Mon",
+            "Tues",
+            "Weds",
+            "Thurs",
+            "Fri",
+            "Sat",
+            "Sun"
+    };
     private final String TAG = "WeekFragment";
     final String DEGREE = "\u00b0";
     private boolean called = false;
@@ -82,6 +93,10 @@ public class WeekFragment extends Fragment {
         linearLayoutManager = new LinearLayoutManager(getActivity());
         weekRecycler.setLayoutManager(linearLayoutManager);
 
+        weekListAdapter = new WeekListAdapter(weekCardInfoArrayList, getActivity());
+
+        weekRecycler.setAdapter(weekListAdapter);
+
         Log.d(TAG, params.toString());
 
 
@@ -108,11 +123,8 @@ public class WeekFragment extends Fragment {
                     public void onResponse(JSONObject response) {
                         try {
                             // Setting param imageURL to newImageUrl for access in innerclass
-                            String newImageUrl = imageUrl;
-                            weekCardInfoArrayList = parseResponse(response);
-                            weekListAdapter = new WeekListAdapter(weekCardInfoArrayList, getActivity());
+                            weekListAdapter.setWeekList(parseResponse(response));
 
-                            weekRecycler.setAdapter(weekListAdapter);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -171,8 +183,8 @@ public class WeekFragment extends Fragment {
         for (int i = 0; i < NUM_OF_DAYS; i++) {
             // Getting the object from iteration of week array
             JSONObject tempObject = new JSONObject(response.getJSONArray("list").getString(i));
-            String highTemp = tempObject.getJSONObject("temp").getString("max");
-            String lowTemp = tempObject.getJSONObject("temp").getString("min");
+            Double highTemp = Double.valueOf(tempObject.getJSONObject("temp").getString("max"));
+            Double lowTemp = Double.valueOf(tempObject.getJSONObject("temp").getString("min"));
 
             // Obtaining the image icon
             JSONObject iconObject = new JSONObject(tempObject
@@ -181,9 +193,12 @@ public class WeekFragment extends Fragment {
 
             //Getting the day for the week to add to arraylist
             LocalDate localDate = LocalDate.now();
-            String day = localDate.plusDays(i).toString();
+            String day = localDate.plusDays(i) +
+                    " " + DAYS[localDate.plusDays(i).getDayOfWeek()];
+            day = day.substring(5);
+
             Log.d(TAG, highTemp + " " + lowTemp + " " + icon);
-            temp.add(new WeekCardInfo(icon, day, highTemp, lowTemp));
+            temp.add(new WeekCardInfo(icon, day, toFaren(highTemp), toFaren(lowTemp)));
         }
 
         return temp;

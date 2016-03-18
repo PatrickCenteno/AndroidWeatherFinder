@@ -1,10 +1,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:paddingRight="24dp"
-    android:paddingLeft="24dp"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="io.centeno.weatherfinder.WeekFragment">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/pulldown_notice"
+        android:text="Pull down to refresh"
+        android:textColor="@color/main"
+        android:layout_gravity="right"
+        android:gravity="center" />
 
     <!-- TODO: Update blank fragment layout -->
     <android.support.v7.widget.RecyclerView

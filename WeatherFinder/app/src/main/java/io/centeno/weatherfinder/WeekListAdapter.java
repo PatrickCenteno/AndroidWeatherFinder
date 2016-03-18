@@ -41,16 +41,22 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
     @Override
     public void onBindViewHolder(WeekListAdapter.WeekViewHolder holder, int position) {
         WeekCardInfo info = weekList.get(position);
-        holder.day.setText(info.day);
-        holder.highTemp.setText(info.highTemp);
-        holder.lowTemp.setText(info.lowTemp);
+        holder.day.setText("Day: " + info.day);
+        holder.highTemp.setText("High: " +info.highTemp);
+        holder.lowTemp.setText("Low: " + info.lowTemp);
         holder.setImageView(info.imageIconCode);
+    }
+
+    public void setWeekList(ArrayList<WeekCardInfo> list){
+        this.weekList = list;
+        this.notifyDataSetChanged();
     }
 
 
     @Override
     public int getItemCount() {
-        return weekList.size();
+        if (weekList == null)   return 0;
+        else    return weekList.size();
     }
 
     public static class WeekViewHolder extends RecyclerView.ViewHolder {
