@@ -190,15 +190,17 @@ public class WeekFragment extends Fragment {
             JSONObject iconObject = new JSONObject(tempObject
                     .getJSONArray("weather").getString(0));
             String icon = iconObject.getString("icon");
+            String description = iconObject.getString("main");
 
             //Getting the day for the week to add to arraylist
             LocalDate localDate = LocalDate.now();
-            String day = localDate.plusDays(i) +
-                    " " + DAYS[localDate.plusDays(i).getDayOfWeek()];
+            String day = localDate.plusDays(i).toString();
             day = day.substring(5);
+            day = day.replace('-', '/');
+            String fullDate = DAYS[localDate.plusDays(i).getDayOfWeek()] + "\n" + day;
 
             Log.d(TAG, highTemp + " " + lowTemp + " " + icon);
-            temp.add(new WeekCardInfo(icon, day, toFaren(highTemp), toFaren(lowTemp)));
+            temp.add(new WeekCardInfo(icon, fullDate, toFaren(highTemp), toFaren(lowTemp), description));
         }
 
         return temp;

@@ -41,9 +41,10 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
     @Override
     public void onBindViewHolder(WeekListAdapter.WeekViewHolder holder, int position) {
         WeekCardInfo info = weekList.get(position);
-        holder.day.setText("Day: " + info.day);
+        holder.day.setText(info.day);
         holder.highTemp.setText("High: " +info.highTemp);
         holder.lowTemp.setText("Low: " + info.lowTemp);
+        holder.description.setText(info.description);
         holder.setImageView(info.imageIconCode);
     }
 
@@ -66,6 +67,7 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
         private TextView day;
         private TextView highTemp;
         private TextView lowTemp;
+        private TextView description;
         private NetworkImageView icon;
         private ArrayList<WeekCardInfo> weekList;
 
@@ -90,6 +92,7 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
             highTemp = (TextView) weekCard.findViewById(R.id.high_temp_week);
             lowTemp = (TextView) weekCard.findViewById(R.id.low_temp_week);
             icon = (NetworkImageView) weekCard.findViewById(R.id.week_weather_image);
+            description = (TextView) weekCard.findViewById(R.id.weather_description_list);
 
 
         }

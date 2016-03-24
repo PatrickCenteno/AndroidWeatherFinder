@@ -11,11 +11,14 @@ public class WeekCardInfo {
     public String day;
     public String highTemp;
     public String lowTemp;
+    public String description;
 
-    public WeekCardInfo(String imageIconCode, String day, String highTemp, String lowTemp) {
+    public WeekCardInfo(String imageIconCode, String day,
+                        String highTemp, String lowTemp, String description) {
         this.imageIconCode = imageIconCode;
         this.day = day;
         this.highTemp = highTemp;
         this.lowTemp = lowTemp;
+        this.description = description;
     }
 }

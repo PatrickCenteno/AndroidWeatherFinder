@@ -14,17 +14,37 @@
         android:orientation="horizontal"
         android:id="@+id/week_card_layout">
 
-        <com.android.volley.toolbox.NetworkImageView
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:adjustViewBounds="true"
-            android:id="@+id/week_weather_image"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp">
+
+            <com.android.volley.toolbox.NetworkImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:adjustViewBounds="true"
+                android:id="@+id/week_weather_image"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/weather_description_list"
+                android:textColor="@color/main"
+                android:text="t"
+                android:gravity="center"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
+
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="15dp"
             android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/day"
             android:textColor="@color/main"
             android:layout_weight="1" />
@@ -37,6 +57,8 @@
             android:text="High:"
             android:id="@+id/high_temp_week"
             android:textColor="@color/main_dark" />
+
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

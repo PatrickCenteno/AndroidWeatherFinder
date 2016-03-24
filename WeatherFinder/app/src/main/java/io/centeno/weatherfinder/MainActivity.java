@@ -132,9 +132,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onStop() {
-        if (isOnline()) apiClient.disconnect();
-        Log.d(TAG, "onStop() is called");
-        new WriteToDB().execute(dbHelper);
+        if (isOnline()) {
+            apiClient.disconnect();
+            Log.d(TAG, "onStop() is called");
+            new WriteToDB().execute(dbHelper);
+            super.onStop();
+        }
         super.onStop();
     }
 
@@ -344,6 +347,10 @@ public class MainActivity extends AppCompatActivity
                     sl = new SelectedLocations(address, lat, lon);
                     selectedLocations.add(sl);
                 } while (cursor.moveToNext());
+            }
+
+            if (selectedLocations.size() > 0){
+               displayList();
             }
 
             return null;

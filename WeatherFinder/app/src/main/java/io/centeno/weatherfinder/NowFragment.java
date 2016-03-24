@@ -177,7 +177,7 @@ public class NowFragment extends Fragment {
         weatherDescription = (TextView) rootView.findViewById(R.id.weather_description);
         weatherIcon = (NetworkImageView) rootView.findViewById(R.id.weather_icon_display);
         weatherLoading = (ProgressBar) rootView.findViewById(R.id.weather_loading);
-        locationDisplay.setText("Weather for: " + address);
+        locationDisplay.setText(address);
     }
 
     private void showMainLayout() {
@@ -221,5 +221,6 @@ public class NowFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
     }
+
 
 }
