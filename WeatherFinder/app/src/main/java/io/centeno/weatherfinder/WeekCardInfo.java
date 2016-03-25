@@ -12,13 +12,20 @@ public class WeekCardInfo {
     public String highTemp;
     public String lowTemp;
     public String description;
+    public String rain;
+    public String snow;
+    public String windSpeed;
 
-    public WeekCardInfo(String imageIconCode, String day,
-                        String highTemp, String lowTemp, String description) {
+    public WeekCardInfo(String imageIconCode, String day, String highTemp,
+                        String lowTemp, String description, String rain,
+                        String snow, String windSpeed) {
         this.imageIconCode = imageIconCode;
         this.day = day;
         this.highTemp = highTemp;
         this.lowTemp = lowTemp;
         this.description = description;
+        this.rain = rain;
+        this.snow = snow;
+        this.windSpeed = windSpeed;
     }
 }

@@ -181,10 +181,18 @@ public class WeekFragment extends Fragment {
     private ArrayList<WeekCardInfo> parseResponse(JSONObject response) throws JSONException{
         ArrayList<WeekCardInfo> temp = new ArrayList<>();
         for (int i = 0; i < NUM_OF_DAYS; i++) {
+            // Setting these to "" in case they dont exists
+            String rain = "";
+            String snow = "";
+
             // Getting the object from iteration of week array
             JSONObject tempObject = new JSONObject(response.getJSONArray("list").getString(i));
             Double highTemp = Double.valueOf(tempObject.getJSONObject("temp").getString("max"));
             Double lowTemp = Double.valueOf(tempObject.getJSONObject("temp").getString("min"));
+            String windSpeed = tempObject.getString("speed");
+            if (tempObject.has("rain"))     rain = tempObject.getString("rain");
+            if (tempObject.has("snow"))     snow = tempObject.getString("snow");
+
 
             // Obtaining the image icon
             JSONObject iconObject = new JSONObject(tempObject
@@ -200,7 +208,8 @@ public class WeekFragment extends Fragment {
             String fullDate = DAYS[localDate.plusDays(i).getDayOfWeek()] + "\n" + day;
 
             Log.d(TAG, highTemp + " " + lowTemp + " " + icon);
-            temp.add(new WeekCardInfo(icon, fullDate, toFaren(highTemp), toFaren(lowTemp), description));
+            temp.add(new WeekCardInfo(icon, fullDate, toFaren(highTemp), toFaren(lowTemp),
+                    description, rain, snow, windSpeed));
         }
 
         return temp;

@@ -45,6 +45,17 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
         holder.highTemp.setText("High: " +info.highTemp);
         holder.lowTemp.setText("Low: " + info.lowTemp);
         holder.description.setText(info.description);
+        holder.windSpeed.setText("Wind: " + info.windSpeed);
+
+        if (!info.rain.equals(""))
+            holder.rain.setText("Rain: " + info.rain);
+        else
+            holder.rain.setText("Rain:-");
+        if (!info.snow.equals(""))
+            holder.snow.setText("Snow: " + info.snow);
+        else
+            holder.snow.setText("Snow:-");
+
         holder.setImageView(info.imageIconCode);
     }
 
@@ -68,6 +79,9 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
         private TextView highTemp;
         private TextView lowTemp;
         private TextView description;
+        private TextView rain;
+        private TextView snow;
+        private TextView windSpeed;
         private NetworkImageView icon;
         private ArrayList<WeekCardInfo> weekList;
 
@@ -93,6 +107,9 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
             lowTemp = (TextView) weekCard.findViewById(R.id.low_temp_week);
             icon = (NetworkImageView) weekCard.findViewById(R.id.week_weather_image);
             description = (TextView) weekCard.findViewById(R.id.weather_description_list);
+            rain = (TextView) weekCard.findViewById(R.id.rain_text);
+            snow = (TextView) weekCard.findViewById(R.id.snow_text);
+            windSpeed = (TextView) weekCard.findViewById(R.id.wind_text);
 
 
         }
