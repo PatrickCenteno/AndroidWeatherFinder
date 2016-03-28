@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -29,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 
 /**
@@ -38,7 +41,7 @@ public class WeekFragment extends Fragment {
 
     public final int NUM_OF_DAYS = 7;
 
-    private final String [] DAYS = {
+    private final String[] DAYS = {
             "null",
             "Mon",
             "Tues",
@@ -50,7 +53,7 @@ public class WeekFragment extends Fragment {
     };
     private final String TAG = "WeekFragment";
     final String DEGREE = "\u00b0";
-    private boolean called = false;
+    //private boolean called = false;
 
     private String latitude;
     private String longitude;
@@ -58,6 +61,9 @@ public class WeekFragment extends Fragment {
     private Map<String, String> params;
 
     private RecyclerView weekRecycler;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
+
     private LinearLayoutManager linearLayoutManager;
     private ArrayList<WeekCardInfo> weekCardInfoArrayList;
     private WeekListAdapter weekListAdapter;
@@ -94,6 +100,15 @@ public class WeekFragment extends Fragment {
         weekRecycler.setLayoutManager(linearLayoutManager);
 
         weekListAdapter = new WeekListAdapter(weekCardInfoArrayList, getActivity());
+        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_to_refresh_wee);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                callGetWeather();
+            }
+        });
+
 
         weekRecycler.setAdapter(weekListAdapter);
 
@@ -104,12 +119,11 @@ public class WeekFragment extends Fragment {
     }
 
     public void callGetWeather() {
-        if (!called) {
-            called = true;
-            if (params != null) {
-                getWeather(url, imageUrl, params);
-            }
+        if (params != null) {
+            Log.d(TAG, "getting weather");
+            getWeather(url, imageUrl, params);
         }
+
     }
 
     private void getWeather(String url, final String imageUrl, final Map<String, String> params) {
@@ -124,9 +138,11 @@ public class WeekFragment extends Fragment {
                         try {
                             // Setting param imageURL to newImageUrl for access in innerclass
                             weekListAdapter.setWeekList(parseResponse(response));
+                            swipeRefreshLayout.setRefreshing(false);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            swipeRefreshLayout.setRefreshing(false);
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -134,6 +150,7 @@ public class WeekFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, "Error: " + error);
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 });
         APICaller.getInstance(getActivity()).addToRequestQueue(jsObjRequest);
@@ -178,11 +195,11 @@ public class WeekFragment extends Fragment {
                 + DEGREE + "F";
     }
 
-    private String toMPS(Double speed){
+    private String toMPS(Double speed) {
         return (Math.round(speed / .44704) + " mph");
     }
 
-    private ArrayList<WeekCardInfo> parseResponse(JSONObject response) throws JSONException{
+    private ArrayList<WeekCardInfo> parseResponse(JSONObject response) throws JSONException {
         ArrayList<WeekCardInfo> temp = new ArrayList<>();
         for (int i = 0; i < NUM_OF_DAYS; i++) {
             // Setting these to "" in case they dont exists
@@ -194,8 +211,8 @@ public class WeekFragment extends Fragment {
             Double highTemp = Double.valueOf(tempObject.getJSONObject("temp").getString("max"));
             Double lowTemp = Double.valueOf(tempObject.getJSONObject("temp").getString("min"));
             Double windSpeed = Double.valueOf(tempObject.getString("speed"));
-            if (tempObject.has("rain"))     rain = tempObject.getString("rain");
-            if (tempObject.has("snow"))     snow = tempObject.getString("snow");
+            if (tempObject.has("rain")) rain = tempObject.getString("rain");
+            if (tempObject.has("snow")) snow = tempObject.getString("snow");
 
 
             // Obtaining the image icon
@@ -214,6 +231,7 @@ public class WeekFragment extends Fragment {
             Log.d(TAG, highTemp + " " + lowTemp + " " + icon);
             temp.add(new WeekCardInfo(icon, fullDate, toFaren(highTemp), toFaren(lowTemp),
                     description, rain, snow, toMPS(windSpeed)));
+            swipeRefreshLayout.setRefreshing(false);
         }
 
         return temp;
@@ -228,6 +246,5 @@ public class WeekFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
     }
-
 
 }

@@ -1,24 +1,29 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe_to_refresh_wee"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="io.centeno.weatherfinder.WeekFragment">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/pulldown_notice"
-        android:text="Pull down to refresh"
-        android:textColor="@color/main"
-        android:layout_gravity="right"
-        android:gravity="center" />
-
-    <!-- TODO: Update blank fragment layout -->
-    <android.support.v7.widget.RecyclerView
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/week_weather_recycler">
-    </android.support.v7.widget.RecyclerView>
+        android:clickable="true"
+        android:orientation="vertical"
+        tools:context="io.centeno.weatherfinder.WeekFragment">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/pulldown_notice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:gravity="center"
+            android:text="Pull down to refresh"
+            android:textColor="@color/main" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/week_weather_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+</android.support.v4.widget.SwipeRefreshLayout>
