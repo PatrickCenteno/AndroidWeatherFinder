@@ -1,8 +1,5 @@
 package io.centeno.weatherfinder;
 
-import android.app.Activity;
-import android.net.Uri;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,22 +13,17 @@ import android.view.ViewGroup;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
 import org.joda.time.LocalDate;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
 
 /**
@@ -53,7 +45,7 @@ public class WeekFragment extends Fragment {
     };
     private final String TAG = "WeekFragment";
     final String DEGREE = "\u00b0";
-    //private boolean called = false;
+    private boolean called = false;
 
     private String latitude;
     private String longitude;
@@ -67,7 +59,6 @@ public class WeekFragment extends Fragment {
     private LinearLayoutManager linearLayoutManager;
     private ArrayList<WeekCardInfo> weekCardInfoArrayList;
     private WeekListAdapter weekListAdapter;
-    private ImageLoader imageLoader;
 
     // openweathermap.org information
     private String imageUrl = "http://openweathermap.org/img/w/";
@@ -92,40 +83,40 @@ public class WeekFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_week, container, false);
-        Log.d(TAG, "onCreateView called");
 
-
-        weekRecycler = (RecyclerView) rootView.findViewById(R.id.week_weather_recycler);
-        linearLayoutManager = new LinearLayoutManager(getActivity());
-        weekRecycler.setLayoutManager(linearLayoutManager);
-
-        weekListAdapter = new WeekListAdapter(weekCardInfoArrayList, getActivity());
-        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_to_refresh_wee);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                swipeRefreshLayout.setRefreshing(true);
-                callGetWeather();
-            }
-        });
-
-
-        weekRecycler.setAdapter(weekListAdapter);
-
-        Log.d(TAG, params.toString());
-
-
+        // Initializing the main layout for fragment
+        initMainLayout(rootView);
         return rootView;
     }
 
+    // Calls getWeather once when the fragment is put into view for the first time
     public void callGetWeather() {
-        if (params != null) {
-            Log.d(TAG, "getting weather");
-            getWeather(url, imageUrl, params);
+        if (!called) {
+            called = true;
+            if (params != null) {
+                Log.d(TAG, "getting weather");
+                getWeather(url, imageUrl, params);
+            }
         }
 
     }
 
+    // Called when swiped down
+    public void refreshWeather(){
+        if (params != null){
+            getWeather(url, imageUrl, params);
+        }
+    }
+
+    /**
+     *
+     * @param url
+     * @param imageUrl
+     * @param params
+     * Accepts api url, url for weather icon and a map of http request params
+     * Retreives weather information JSON and weather icon, initializes all data
+     * inside of recycler adapter
+     */
     private void getWeather(String url, final String imageUrl, final Map<String, String> params) {
         url += getParamsGET(params);
         Log.d(TAG, url);
@@ -156,6 +147,26 @@ public class WeekFragment extends Fragment {
         APICaller.getInstance(getActivity()).addToRequestQueue(jsObjRequest);
     }
 
+    // Initializes all views in laout
+    private void initMainLayout(View rootView){
+        weekRecycler = (RecyclerView) rootView.findViewById(R.id.week_weather_recycler);
+        linearLayoutManager = new LinearLayoutManager(getActivity());
+        weekRecycler.setLayoutManager(linearLayoutManager);
+
+        weekListAdapter = new WeekListAdapter(weekCardInfoArrayList, getActivity());
+        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_to_refresh_wee);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                refreshWeather();
+            }
+        });
+
+        weekRecycler.setAdapter(weekListAdapter);
+    }
+
+    // Retreives all arguments from activity
     private void getFromArguments() {
         address = getArguments().getString("address");
         latitude = getArguments().getString("latitude");
@@ -195,10 +206,17 @@ public class WeekFragment extends Fragment {
                 + DEGREE + "F";
     }
 
+    // turns Meters per second into Miles per hour
     private String toMPS(Double speed) {
         return (Math.round(speed / .44704) + " mph");
     }
 
+    /**
+     * @param response
+     * Pareses all information from the Json response. Gets day information
+     * using JodaTime and adds information to Arraylist For Recylcer View
+     * @return ArrayList<WeekCardInfo>
+     */
     private ArrayList<WeekCardInfo> parseResponse(JSONObject response) throws JSONException {
         ArrayList<WeekCardInfo> temp = new ArrayList<>();
         for (int i = 0; i < NUM_OF_DAYS; i++) {
@@ -235,10 +253,6 @@ public class WeekFragment extends Fragment {
         }
 
         return temp;
-    }
-
-    private String createImageURL(String icon) {
-        return icon + ".png";
     }
 
 

@@ -1,9 +1,6 @@
 package io.centeno.weatherfinder;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -20,11 +17,9 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,12 +30,12 @@ import java.util.Map;
 public class NowFragment extends Fragment {
 
     private final String TAG = "NowFragment";
-    final String DEGREE  = "\u00b0";
+    final String DEGREE = "\u00b0";
 
     private String latitude;
     private String longitude;
     private String address;
-    private Map<String,String> params;
+    private Map<String, String> params;
 
     private TextView locationDisplay;
     private TextView weatherDisplay;
@@ -93,14 +88,12 @@ public class NowFragment extends Fragment {
 
 
     /**
-     *
      * @param url
      * @param imageUrl
-     * @param params
-     * Accepts api url, url for weather icon and a map of http request params
-     * Retreives weather information JSON and weather icon, parses and display
-     * as in proper views. Disables progressbar and displays main layout.
-     * showMainLayout() called in getImageIcon(String newImageUrl).
+     * @param params   Accepts api url, url for weather icon and a map of http request params
+     *                 Retreives weather information JSON and weather icon, parses and display
+     *                 as in proper views. Disables progressbar and displays main layout.
+     *                 showMainLayout() called in getImageIcon(String newImageUrl).
      */
     private void getWeather(String url, final String imageUrl, Map<String, String> params) {
         Log.d(TAG, "Making a request");
@@ -130,7 +123,7 @@ public class NowFragment extends Fragment {
                             newImageUrl += createImageURL(iconInfo.getString("icon"));
                             getImageIcon(newImageUrl);
                             swipeRefreshLayout.setRefreshing(false);
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                             swipeRefreshLayout.setRefreshing(false);
                         }
@@ -147,32 +140,30 @@ public class NowFragment extends Fragment {
         APICaller.getInstance(getActivity()).addToRequestQueue(jsObjRequest);
     }
 
-    private void getFromArguments(){
+    private void getFromArguments() {
         address = getArguments().getString("address");
         latitude = getArguments().getString("latitude");
         longitude = getArguments().getString("longitude");
     }
 
     /**
-     *
      * @return String
      * Appends all the parameters into a string to append
      * on to the Api endpoint URL
      */
-    private String getParamsGET (Map<String, String> params){
+    private String getParamsGET(Map<String, String> params) {
         return "lat=" + params.get("lat")
                 + "&" + "lon=" + params.get("lon")
                 + "&" + "appid=" + params.get("appid");
     }
 
     /**
-     *
      * @param latitude
      * @param longitude
      * @return
      */
-    private Map<String, String> buildParams(String latitude, String longitude){
-        Map <String, String> params = new HashMap<String, String>();
+    private Map<String, String> buildParams(String latitude, String longitude) {
+        Map<String, String> params = new HashMap<String, String>();
         params.put("lat", latitude);
         params.put("lon", longitude);
         params.put("appid", API_KEY);
@@ -220,23 +211,22 @@ public class NowFragment extends Fragment {
     }
 
     // Turns Kelvin temp into farenheit
-    private String toFaren(Double temp){
-        return (int)(Math.round
+    private String toFaren(Double temp) {
+        return (int) (Math.round
                 ((temp - 273.15) * 1.8 + 32))
                 + DEGREE + "F";
     }
 
     // showMainLayout() called in here so that displays when everything is done
-    private void getImageIcon(String imageUrl){
+    private void getImageIcon(String imageUrl) {
         imageLoader = APICaller.getInstance(getActivity()).getImageLoader();
         weatherIcon.setImageUrl(imageUrl, imageLoader);
         showMainLayout();
     }
 
-    private String createImageURL(String icon){
+    private String createImageURL(String icon) {
         return icon + ".png";
     }
-
 
 
     @Override
