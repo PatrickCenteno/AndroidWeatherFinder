@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +47,7 @@ public class NowFragment extends Fragment {
     private TextView weatherDescription;
     private TextView weatherHumidity;
     private NetworkImageView weatherIcon;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private ImageLoader imageLoader;
     private ProgressBar weatherLoading;
 
@@ -127,8 +129,10 @@ public class NowFragment extends Fragment {
                             //Log.d(TAG, iconInfo.getString("icon"));
                             newImageUrl += createImageURL(iconInfo.getString("icon"));
                             getImageIcon(newImageUrl);
+                            swipeRefreshLayout.setRefreshing(false);
                         }catch (JSONException e){
                             e.printStackTrace();
+                            swipeRefreshLayout.setRefreshing(false);
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -136,6 +140,7 @@ public class NowFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, "Error: " + error);
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 });
 
@@ -175,6 +180,17 @@ public class NowFragment extends Fragment {
     }
 
     private void initMainLayout(View rootView) {
+        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_to_refresh_now);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                resetMainLayout();
+                if (params != null) {
+                    getWeather(url, imageUrl, params);
+                }
+            }
+        });
         locationDisplay = (TextView) rootView.findViewById(R.id.location_display_weather);
         weatherDisplay = (TextView) rootView.findViewById(R.id.temperature_display_weather);
         weatherDescription = (TextView) rootView.findViewById(R.id.weather_description);
