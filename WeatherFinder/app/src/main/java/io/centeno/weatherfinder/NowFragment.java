@@ -44,6 +44,7 @@ public class NowFragment extends Fragment {
     private TextView locationDisplay;
     private TextView weatherDisplay;
     private TextView weatherDescription;
+    private TextView weatherHumidity;
     private NetworkImageView weatherIcon;
     private ImageLoader imageLoader;
     private ProgressBar weatherLoading;
@@ -113,11 +114,13 @@ public class NowFragment extends Fragment {
                             String newImageUrl = imageUrl;
                             Log.d(TAG, "Response: " + response.toString());
                             Double mainTemp = Double.valueOf(response.getJSONObject("main").getString("temp"));
+                            String humidity = response.getJSONObject("main").getString("humidity") + "%";
 
                             weatherDisplay.setText(toFaren(mainTemp));
                             JSONObject weatherDescriptionInfo = new JSONObject(
                                     response.getJSONArray("weather").getString(0));
                             weatherDescription.setText(weatherDescriptionInfo.getString("main"));
+                            weatherHumidity.setText("Humidity: " + humidity);
 
                             //Have to reset the imageURl before doing this
                             JSONObject iconInfo = new JSONObject(response.getJSONArray("weather").getString(0));
@@ -175,6 +178,7 @@ public class NowFragment extends Fragment {
         locationDisplay = (TextView) rootView.findViewById(R.id.location_display_weather);
         weatherDisplay = (TextView) rootView.findViewById(R.id.temperature_display_weather);
         weatherDescription = (TextView) rootView.findViewById(R.id.weather_description);
+        weatherHumidity = (TextView) rootView.findViewById(R.id.weather_humidity);
         weatherIcon = (NetworkImageView) rootView.findViewById(R.id.weather_icon_display);
         weatherLoading = (ProgressBar) rootView.findViewById(R.id.weather_loading);
         locationDisplay.setText(address);
@@ -186,6 +190,7 @@ public class NowFragment extends Fragment {
         weatherDisplay.setVisibility(View.VISIBLE);
         weatherIcon.setVisibility(View.VISIBLE);
         weatherDescription.setVisibility(View.VISIBLE);
+        weatherHumidity.setVisibility(View.VISIBLE);
     }
 
     private void resetMainLayout() {
@@ -195,6 +200,7 @@ public class NowFragment extends Fragment {
         weatherDisplay.setVisibility(View.GONE);
         weatherIcon.setVisibility(View.GONE);
         weatherDescription.setVisibility(View.GONE);
+        weatherHumidity.setVisibility(View.GONE);
     }
 
     // Turns Kelvin temp into farenheit

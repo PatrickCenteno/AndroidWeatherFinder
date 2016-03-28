@@ -178,6 +178,10 @@ public class WeekFragment extends Fragment {
                 + DEGREE + "F";
     }
 
+    private String toMPS(Double speed){
+        return (Math.round(speed / .44704) + " mph");
+    }
+
     private ArrayList<WeekCardInfo> parseResponse(JSONObject response) throws JSONException{
         ArrayList<WeekCardInfo> temp = new ArrayList<>();
         for (int i = 0; i < NUM_OF_DAYS; i++) {
@@ -189,7 +193,7 @@ public class WeekFragment extends Fragment {
             JSONObject tempObject = new JSONObject(response.getJSONArray("list").getString(i));
             Double highTemp = Double.valueOf(tempObject.getJSONObject("temp").getString("max"));
             Double lowTemp = Double.valueOf(tempObject.getJSONObject("temp").getString("min"));
-            String windSpeed = tempObject.getString("speed");
+            Double windSpeed = Double.valueOf(tempObject.getString("speed"));
             if (tempObject.has("rain"))     rain = tempObject.getString("rain");
             if (tempObject.has("snow"))     snow = tempObject.getString("snow");
 
@@ -209,7 +213,7 @@ public class WeekFragment extends Fragment {
 
             Log.d(TAG, highTemp + " " + lowTemp + " " + icon);
             temp.add(new WeekCardInfo(icon, fullDate, toFaren(highTemp), toFaren(lowTemp),
-                    description, rain, snow, windSpeed));
+                    description, rain, snow, toMPS(windSpeed)));
         }
 
         return temp;

@@ -48,13 +48,13 @@ public class WeekListAdapter extends RecyclerView.Adapter<WeekListAdapter.WeekVi
         holder.windSpeed.setText("Wind: " + info.windSpeed);
 
         if (!info.rain.equals(""))
-            holder.rain.setText("Rain: " + info.rain);
+            holder.rain.setText("Rain: " + info.rain + " mm");
         else
-            holder.rain.setText("Rain:-");
+            holder.rain.setText("Rain -");
         if (!info.snow.equals(""))
-            holder.snow.setText("Snow: " + info.snow);
+            holder.snow.setText("Snow: " + info.snow + " mm");
         else
-            holder.snow.setText("Snow:-");
+            holder.snow.setText("Snow -");
 
         holder.setImageView(info.imageIconCode);
     }
