@@ -5,4 +5,6 @@ Retrieves all weather information from openweathermap.org
 
 Gets locatation information from Google Places API and Geocoder
 
-<b> Currently being updated. This is not a fully working build</b>
+<b> Version 2.0 now available on the Play Store</b>
+
+<a href="https://play.google.com/store/apps/details?id=io.centeno.weatherfinder">Click here to see listing</a>
