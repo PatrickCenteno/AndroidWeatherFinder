@@ -63,7 +63,7 @@ public class WeekFragment extends Fragment {
     // openweathermap.org information
     private String imageUrl = "http://openweathermap.org/img/w/";
     private String url = "http://api.openweathermap.org/data/2.5/forecast/daily?";
-    private final String API_KEY = "209bb1808f1fca53362d3704d127f45f";
+    private final String API_KEY = "**************************";
 
     public WeekFragment() {
         // Required empty public constructor
